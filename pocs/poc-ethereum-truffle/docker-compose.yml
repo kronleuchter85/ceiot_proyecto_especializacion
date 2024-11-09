@@ -1,0 +1,20 @@
+version: "3.8"
+   
+services:
+
+
+
+
+  poc-ethereum-truffle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: poc-ethereum-truffle
+    container_name: poc-ethereum-truffle
+    # network_mode: host
+    # ports:
+    #   - 8070:8080
+    # command:  ["java" , "-jar" , "target/gtrader2-orders-router-launcher-1.0-SNAPSHOT.jar"
+    #     , "--serverPort=8080" ,  "--jpaDdlAuto=create"] 
+    
+    
