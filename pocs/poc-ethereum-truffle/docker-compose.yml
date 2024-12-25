@@ -1,8 +1,6 @@
-version: "3.8"
+# version: "3.8"
    
 services:
-
-
 
 
   poc-ethereum-truffle:
@@ -12,9 +10,18 @@ services:
     image: poc-ethereum-truffle
     container_name: poc-ethereum-truffle
     # network_mode: host
-    # ports:
-    #   - 8070:8080
-    # command:  ["java" , "-jar" , "target/gtrader2-orders-router-launcher-1.0-SNAPSHOT.jar"
-    #     , "--serverPort=8080" ,  "--jpaDdlAuto=create"] 
-    
-    
+    stdin_open: true
+    tty: true
+  
+      
+  ganache:
+      image: trufflesuite/ganache:latest
+      container_name: ganache
+      ports:
+        - "7545:7545" # Exponer el puerto 7545 (Ganache CLI)
+      command:
+        - --host=0.0.0.0 # Permitir conexiones desde cualquier host
+        - --port=7545    # Puerto del servicio Ganache
+        - --chain.chainId=1337 # Chain ID personalizado para evitar conflictos con Metamask
+        - --wallet.totalAccounts=10 # Número de cuentas preconfiguradas
+
