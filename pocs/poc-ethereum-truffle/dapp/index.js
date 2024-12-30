@@ -1,27 +1,56 @@
 const express = require("express");
-const {Web3} = require("web3");
 
 const app = express();
 const port = 3000;
 
-// Configura el proveedor y dirección del contrato
-const web3 = new Web3(process.env.BLOCKCHAIN_URL);
-// const contractABI = require("./contractABI.json");
-// const contractAddress = process.env.CONTRACT_ADDRESS;
-// const contract = new web3.eth.Contract(contractABI, contractAddress);
 
+const BlockchainService = require('./blockchain_service'); 
+const blockchainService = new BlockchainService(process.env.BLOCKCHAIN_URL);
 
 app.get("/api/accounts", async (req, res) => {
-    try {
-        accounts = await web3.eth.getAccounts()
-        res.json({ accounts });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+      accounts = await blockchainService.getAccounts();
+      res.json({ accounts });
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
 });
 
+
+app.get('/api/blocks/:n', async (req, res) => {
+  const n = parseInt(req.params.n, 10); 
+
+  if (isNaN(n) || n <= 0) {
+    return res.status(400).send({ error: 'El parámetro N debe ser un número entero positivo.' });
+  }
+  try {
+    const blocks = await blockchainService.getLastNBlocks(n);
+    res.json({ blocks });
+  }
+  catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+
+});
+
+app.get("/api/transactions/block/:n", async (req, res) => {
+  const n = parseInt(req.params.n, 10); 
+
+  if (isNaN(n) || n <= 0) {
+    return res.status(400).send({ error: 'El parámetro N debe ser un número entero positivo.' });
+  }
+  
+  try {
+    const txs = await blockchainService.getTransactionsFromBlock(n);
+    res.json({ txs });
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+});
+
+
 // Rutas REST
-// app.get("/getData", async (req, res) => {
+// app.get("/getDatad", async (req, res) => {
 //     try {
 //         const data = await contract.methods.getData().call();
 //         res.json({ data });

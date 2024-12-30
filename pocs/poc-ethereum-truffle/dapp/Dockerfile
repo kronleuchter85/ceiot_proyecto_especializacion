@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /app
 
-# COPY . .
+COPY . .
 RUN npm install web3 dotenv express
 RUN npm install
 
