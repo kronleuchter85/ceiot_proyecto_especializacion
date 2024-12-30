@@ -8,4 +8,8 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["truffle", "develop"]
+RUN truffle init
+RUN truffle compile 
+# RUN truffle migrate --network development
+
+CMD ["/bin/bash"]

@@ -3,16 +3,6 @@
 services:
 
 
-  poc-ethereum-truffle:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: poc-ethereum-truffle
-    container_name: poc-ethereum-truffle
-    # network_mode: host
-    stdin_open: true
-    tty: true
-  
       
   ganache:
       image: trufflesuite/ganache:latest
@@ -24,20 +14,43 @@ services:
         - --port=7545    # Puerto del servicio Ganache
         - --chain.chainId=1337 # Chain ID personalizado para evitar conflictos con Metamask
         - --wallet.totalAccounts=10 # Número de cuentas preconfiguradas
+      # healthcheck:
+      #   test: ["CMD", "nc", "-z", "localhost", "7545"]
+      #   interval: 5s
+      #   timeout: 3s
+      #   retries: 5
+
+
+
+  smart-contracts-deployer:
+    build:
+      context: ./smart-contracts
+      dockerfile: Dockerfile
+    image: smart-contracts-deployer
+    container_name: smart-contracts-deployer
+    depends_on:
+      - ganache
+    command: truffle migrate --network development
+      # ganache:
+      #   condition: service_healthy
+    # network_mode: host
+    # stdin_open: true
+    # tty: true
+  
 
   dapp:
     build:
-      context: ./backend
+      context: ./dapp
       dockerfile: Dockerfile
     depends_on:
       - ganache
     volumes:
-      - ./backend/index.js:/app/index.js
+      - ./dapp/index.js:/app/index.js
     # working_dir: /usr/src/app
     environment:
       - BLOCKCHAIN_URL=http://ganache:7545
       - CONTRACT_ADDRESS=0xYourSmartContractAddress
     ports:
         - "3000:3000"
-    stdin_open: true
-    tty: true
+  #   stdin_open: true
+  #   tty: true
