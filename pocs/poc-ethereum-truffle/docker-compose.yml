@@ -25,3 +25,19 @@ services:
         - --chain.chainId=1337 # Chain ID personalizado para evitar conflictos con Metamask
         - --wallet.totalAccounts=10 # Número de cuentas preconfiguradas
 
+  dapp:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - ganache
+    volumes:
+      - ./backend/index.js:/app/index.js
+    # working_dir: /usr/src/app
+    environment:
+      - BLOCKCHAIN_URL=http://ganache:7545
+      - CONTRACT_ADDRESS=0xYourSmartContractAddress
+    ports:
+        - "3000:3000"
+    stdin_open: true
+    tty: true
