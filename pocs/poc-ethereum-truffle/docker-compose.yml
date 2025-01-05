@@ -20,8 +20,8 @@ services:
     build:
       context: ./smart-contracts
       dockerfile: Dockerfile
-    image: smart-contracts-deployer
-    container_name: smart-contracts-deployer
+    image: poc-ethereum-smart-contracts-deployer
+    container_name: poc-ethereum-smart-contracts-deployer
     depends_on:
       - ganache
     volumes:
@@ -39,6 +39,8 @@ services:
     build:
       context: ./dapp
       dockerfile: Dockerfile
+    image: poc-ethereum-dapp
+    container_name: poc-ethereum-dapp
     depends_on:
       - ganache
     volumes:
@@ -48,5 +50,3 @@ services:
       - BLOCKCHAIN_URL=http://ganache:7545
     ports:
         - "3000:3000"
-  #   stdin_open: true
-  #   tty: true

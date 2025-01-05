@@ -22,7 +22,7 @@ class BlockchainService {
             blockNumbers.map(async (num) => {
                 const block = await this.web3.eth.getBlock(num);
                 return JSON.parse(
-                JSON.stringify(block, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
+                    JSON.stringify(block, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
                 );
             })
         );
@@ -57,20 +57,54 @@ class BlockchainService {
         return JSON.parse(fs.readFileSync(path.join(ABI_DIR, contractName + '.json'), 'utf8')).abi;
     }
 
-    async invoke(contractName, contractAddress, methodName){
+    async call(contractName, contractAddress, methodName){
         const abi = this.getAbi(contractName);
 
-
-        console.log("ABI:", abi); // Debería imprimir un array
-        console.log("Tipo de ABI:", typeof abi); // Debería ser 'object'
-        console.log("Es un array:", Array.isArray(abi)); // Debería ser true
-
         const contract = new this.web3.eth.Contract(abi, contractAddress);
-        // const account = await getAccounts()[0];
-        const result = await contract.methods[methodName].call();
-
-        return result;
+        const result = await contract.methods[methodName]().call();
+        const sanitizedResult = JSON.parse(JSON.stringify(result, (key, value) => 
+            typeof value === 'bigint' ? value.toString() : value
+          ));
+        console.log(`Resultado:`, sanitizedResult);
+        return sanitizedResult;
     }
+
+    async send(contractName, contractAddress, methodName , value , account , privateKey){
+
+        const abi = this.getAbi(contractName);
+        const contract = new this.web3.eth.Contract(abi, contractAddress);
+        const tx = contract.methods[methodName](value);
+        const estimatedGas = await tx.estimateGas({ from: account });
+        const gasPrice = await this.web3.eth.getGasPrice();
+        
+        const txData = {
+          from: account,
+          to: contractAddress,
+          gas: estimatedGas,
+          gasPrice: gasPrice,
+          data: tx.encodeABI(), 
+        };
+
+        console.log(`TxData: ${txData}`);
+
+        try{
+            
+            const signedTx = await this.web3.eth.accounts.signTransaction(txData, privateKey);
+            const receipt = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    
+            const sanitizedReceipt = JSON.parse(JSON.stringify(receipt, (key, value) => 
+                typeof value === 'bigint' ? value.toString() : value
+              ));
+            console.log(`Transacción enviada con éxito:`, sanitizedReceipt);
+        
+            return sanitizedReceipt;
+
+        } catch (error) {
+            console.error(`Error al invocar el método de escritura:`, error);
+            throw error;
+        }
+    }
+
 
 }
 

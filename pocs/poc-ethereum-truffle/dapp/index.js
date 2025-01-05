@@ -1,12 +1,13 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
 const port = 3000;
 
-
 const BlockchainService = require('./blockchain_service'); 
 const blockchainService = new BlockchainService(process.env.BLOCKCHAIN_URL);
 
+app.use(bodyParser.json());
 
 app.get("/api/accounts", async (req, res) => {
   try {
@@ -49,7 +50,6 @@ app.get("/api/transactions/block/:n", async (req, res) => {
   }
 });
 
-
 app.get('/api/abi/:contractName', async (req, res) => {
   const { contractName } = req.params;
 
@@ -64,12 +64,12 @@ app.get('/api/abi/:contractName', async (req, res) => {
   }
 });
 
-app.get('/api/contracts/read/:contractName/:contractAddress/:method', async (req, res) => {
+app.get('/api/contracts/call/:contractName/:contractAddress/:method', async (req, res) => {
   const { contractName , contractAddress , method } = req.params;
 
   try {
     // Verifica si existe el archivo ABI correspondiente al contrato
-    const result = await blockchainService.invoke(contractName , contractAddress , method);
+    const result = await blockchainService.call(contractName , contractAddress , method);
 
     res.json({ result });
   } catch (error) {
@@ -78,18 +78,27 @@ app.get('/api/contracts/read/:contractName/:contractAddress/:method', async (req
   }
 });
 
-// app.get('/api/contracts/write/:contractName/:contractAddress/:method', async (req, res) => {
-//   const { contractName , contractAddress , method } = req.params;
+app.post('/api/contracts/send/:contractName/:contractAddress/:method', async (req, res) => {
+  const { contractName , contractAddress , method } = req.params;
+  const { value, account, privateKey } = req.body;
 
-//   try {
-//     const result = await blockchainService.invoke(contractName , contractAddress , method);
+  if (!value || !account || !privateKey) {
+    return res.status(400).json({ error: "Todos los parámetros son obligatorios: param1, param2, param3, param4" });
+}
 
-//     res.json({ result });
-//   } catch (error) {
-//     console.error("Contract ABI not found:", error);
-//     res.status(500).json({ error: "Contract ABI not found", details: error.message });
-//   }
-// });
+  try {
+    const result = await blockchainService.send(contractName , contractAddress , method , value, account, privateKey);
+
+    res.status(200).json({
+      message: "Parámetros recibidos correctamente",
+      receipt: result
+    });
+
+  } catch (error) {
+    console.error("Contract ABI not found:", error);
+    res.status(500).json({ error: "Contract ABI not found", details: error.message });
+  }
+});
 
 
 
