@@ -7,6 +7,7 @@ const port = 3000;
 const BlockchainService = require('./blockchain_service'); 
 const blockchainService = new BlockchainService(process.env.BLOCKCHAIN_URL);
 
+
 app.get("/api/accounts", async (req, res) => {
   try {
       accounts = await blockchainService.getAccounts();
@@ -47,6 +48,49 @@ app.get("/api/transactions/block/:n", async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 });
+
+
+app.get('/api/abi/:contractName', async (req, res) => {
+  const { contractName } = req.params;
+
+  try {
+    // Verifica si existe el archivo ABI correspondiente al contrato
+    const abiPath = blockchainService.getAbi(contractName);
+
+    res.json({ abiPath });
+  } catch (error) {
+    console.error("Contract ABI not found:", error);
+    res.status(500).json({ error: "Contract ABI not found", details: error.message });
+  }
+});
+
+app.get('/api/contracts/read/:contractName/:contractAddress/:method', async (req, res) => {
+  const { contractName , contractAddress , method } = req.params;
+
+  try {
+    // Verifica si existe el archivo ABI correspondiente al contrato
+    const result = await blockchainService.invoke(contractName , contractAddress , method);
+
+    res.json({ result });
+  } catch (error) {
+    console.error("Contract ABI not found:", error);
+    res.status(500).json({ error: "Contract ABI not found", details: error.message });
+  }
+});
+
+// app.get('/api/contracts/write/:contractName/:contractAddress/:method', async (req, res) => {
+//   const { contractName , contractAddress , method } = req.params;
+
+//   try {
+//     const result = await blockchainService.invoke(contractName , contractAddress , method);
+
+//     res.json({ result });
+//   } catch (error) {
+//     console.error("Contract ABI not found:", error);
+//     res.status(500).json({ error: "Contract ABI not found", details: error.message });
+//   }
+// });
+
 
 
 // Rutas REST

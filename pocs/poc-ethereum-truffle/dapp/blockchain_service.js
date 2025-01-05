@@ -1,5 +1,8 @@
 
 const {Web3} = require("web3");
+const fs = require('fs');
+const path = require('path');
+const ABI_DIR = '/app/abi';
 
 class BlockchainService {
 
@@ -48,6 +51,25 @@ class BlockchainService {
             console.error(`Error al obtener las transacciones del bloque ${blockNumber}:`, error);
             return [];
         }
+    }
+
+    getAbi(contractName){
+        return JSON.parse(fs.readFileSync(path.join(ABI_DIR, contractName + '.json'), 'utf8')).abi;
+    }
+
+    async invoke(contractName, contractAddress, methodName){
+        const abi = this.getAbi(contractName);
+
+
+        console.log("ABI:", abi); // Debería imprimir un array
+        console.log("Tipo de ABI:", typeof abi); // Debería ser 'object'
+        console.log("Es un array:", Array.isArray(abi)); // Debería ser true
+
+        const contract = new this.web3.eth.Contract(abi, contractAddress);
+        // const account = await getAccounts()[0];
+        const result = await contract.methods[methodName].call();
+
+        return result;
     }
 
 }
