@@ -102,27 +102,6 @@ app.post('/api/contracts/send/:contractName/:contractAddress/:method', async (re
 
 
 
-// Rutas REST
-// app.get("/getDatad", async (req, res) => {
-//     try {
-//         const data = await contract.methods.getData().call();
-//         res.json({ data });
-//     } catch (err) {
-//         res.status(500).json({ error: err.message });
-//     }
-// });
-
-// app.post("/setData", async (req, res) => {
-//     try {
-//         const { value } = req.body; // valor enviado por el cliente
-//         const accounts = await web3.eth.getAccounts();
-//         const receipt = await contract.methods.setData(value).send({ from: accounts[0] });
-//         res.json({ receipt });
-//     } catch (err) {
-//         res.status(500).json({ error: err.message });
-//     }
-// });
-
 app.listen(port, () => {
     console.log(`API listening on port ${port}`);
 });
