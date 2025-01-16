@@ -8,6 +8,7 @@ class BlockchainService {
 
     constructor(providerUrl){
         this.web3 = new Web3(providerUrl);
+        this.contracts = new Map();
     }
 
     async getAccounts(){
@@ -105,7 +106,16 @@ class BlockchainService {
         }
     }
 
+    async registerContract(contractName , contractAddress){
+        console.log(`Adding ${contractName}: ${contractAddress} to the Registry`);
+        this.contracts.set(contractName , contractAddress);
+        console.log('Current Registry:', Array.from(this.contracts.entries()));
+    }
 
+    async getRegisteredContracts(){
+        console.log('Retrieving Registry:', Array.from(this.contracts.entries()));
+        return Array.from(this.contracts.entries());
+    }
 }
 
 

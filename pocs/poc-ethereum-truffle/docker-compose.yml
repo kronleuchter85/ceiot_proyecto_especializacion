@@ -26,9 +26,9 @@ services:
       - ganache
     volumes:
       - ./abi:/app/build/contracts
-    command: truffle migrate --network development
-    # stdin_open: true
-    # tty: true
+    command: truffle migrate --network development & 
+    stdin_open: true
+    tty: true
   
 
 

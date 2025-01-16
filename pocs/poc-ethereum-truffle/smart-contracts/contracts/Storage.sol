@@ -4,9 +4,7 @@ contract Storage {
     uint256 private data;
 
 
-    constructor(uint _data) {
-        require(_data > 0, "Data must be greater than 0");
-        data = _data;
+    constructor() {
     }
 
     function set(uint256 x) public {
