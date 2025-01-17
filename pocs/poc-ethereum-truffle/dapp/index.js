@@ -38,7 +38,7 @@ app.get('/api/blocks/:n', async (req, res) => {
 //
 // Gets the transactions of a block
 //
-app.get("/api/transactions/block/:n", async (req, res) => {
+app.get("/api/blocks/:n/transactions", async (req, res) => {
   const n = parseInt(req.params.n, 10); 
 
   if (isNaN(n) || n <= 0) {
@@ -56,7 +56,7 @@ app.get("/api/transactions/block/:n", async (req, res) => {
 //
 // Returns the ABI JSON specification of the smart contract
 //
-app.get('/api/abi/:contractName', async (req, res) => {
+app.get('/api/contracts/:contractName/abi', async (req, res) => {
   const { contractName } = req.params;
 
   try {
@@ -73,8 +73,9 @@ app.get('/api/abi/:contractName', async (req, res) => {
 //
 // Invoke for reading
 //
-app.get('/api/contracts/call/:contractName/:contractAddress/:method', async (req, res) => {
-  const { contractName , contractAddress , method } = req.params;
+app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
+  const { contractName ,  method } = req.params;
+  const contractAddress = blockchainService.getContractAddress(contractName);
 
   try {
     // Verifica si existe el archivo ABI correspondiente al contrato
@@ -90,9 +91,10 @@ app.get('/api/contracts/call/:contractName/:contractAddress/:method', async (req
 //
 // Invoke for writing
 //
-app.post('/api/contracts/send/:contractName/:contractAddress/:method', async (req, res) => {
-  const { contractName , contractAddress , method } = req.params;
+app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
+  const { contractName ,  method } = req.params;
   const { value, account, privateKey } = req.body;
+  const contractAddress = blockchainService.getContractAddress(contractName);
 
   if (!value || !account || !privateKey) {
     return res.status(400).json({ error: "Todos los parámetros son obligatorios: param1, param2, param3, param4" });
@@ -116,7 +118,7 @@ app.post('/api/contracts/register', async (req, res) => {
   const { contractName, contractAddress } = req.body;
 
   try {
-    await blockchainService.registerContract(contractName , contractAddress);
+    blockchainService.registerContract(contractName , contractAddress);
     res.status(200).json({
       message: "Contrato Registrado"
     });
@@ -127,11 +129,35 @@ app.post('/api/contracts/register', async (req, res) => {
 });
 
 
-app.get('/api/contracts/register', async (req, res) => {
-  const { contractName , contractAddress } = req.params;
+app.get('/api/contracts/registry', async (req, res) => {
 
   try {
-    const result = await blockchainService.getRegisteredContracts();
+    const result = blockchainService.getRegisteredContracts();
+    res.json({ result });
+  } catch (error) {
+    console.error("Problem registering contract:", error);
+    res.status(500).json({ error: "Problem registering contract", details: error.message });
+  }
+});
+
+
+app.get('/api/contracts/:contractName/events/:eventName', async (req, res) => {
+  const { contractName , contractAddress , eventName } = req.params;
+
+  try {
+    const result = await blockchainService.getAllEvents(contractName,contractAddress , eventName);
+    res.json({ result });
+  } catch (error) {
+    console.error("Problem registering contract:", error);
+    res.status(500).json({ error: "Problem registering contract", details: error.message });
+  }
+});
+
+
+app.get('/api/expenses', async (req, res) => {
+
+  try {
+    const result = blockchainService.getExpenses();
     res.json({ result });
   } catch (error) {
     console.error("Problem registering contract:", error);

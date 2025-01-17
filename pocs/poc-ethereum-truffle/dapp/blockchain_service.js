@@ -1,14 +1,20 @@
-
+// const axios = require('axios');
 const {Web3} = require("web3");
+const ExpenseService = require('./expenses_service'); 
 const fs = require('fs');
 const path = require('path');
+
 const ABI_DIR = '/app/abi';
+
+
+
 
 class BlockchainService {
 
     constructor(providerUrl){
         this.web3 = new Web3(providerUrl);
         this.contracts = new Map();
+        this.expenseService = new ExpenseService(providerUrl);
     }
 
     async getAccounts(){
@@ -70,11 +76,17 @@ class BlockchainService {
         return sanitizedResult;
     }
 
-    async send(contractName, contractAddress, methodName , value , account , privateKey){
+    async send(contractName, contractAddress, methodName , values , account , privateKey){
+
+
+        console.log(`Invoking method: ${contractName}.${methodName}(${values})`);
+        console.log(`Contract address: ${contractAddress})`);
+        console.log(`Contract account: ${account})`);
+
 
         const abi = this.getAbi(contractName);
         const contract = new this.web3.eth.Contract(abi, contractAddress);
-        const tx = contract.methods[methodName](value);
+        const tx = contract.methods[methodName](...values);
         const estimatedGas = await tx.estimateGas({ from: account });
         const gasPrice = await this.web3.eth.getGasPrice();
         
@@ -97,7 +109,11 @@ class BlockchainService {
                 typeof value === 'bigint' ? value.toString() : value
               ));
             console.log(`Transacción enviada con éxito:`, sanitizedReceipt);
-        
+
+            const gasUsed = sanitizedReceipt['gasUsed'];
+
+            this.expenseService.addExpense(contractName , methodName , gasUsed , gasPrice);
+
             return sanitizedReceipt;
 
         } catch (error) {
@@ -106,25 +122,52 @@ class BlockchainService {
         }
     }
 
-    async registerContract(contractName , contractAddress){
+
+
+
+
+
+    registerContract(contractName , contractAddress){
         console.log(`Adding ${contractName}: ${contractAddress} to the Registry`);
         this.contracts.set(contractName , contractAddress);
         console.log('Current Registry:', Array.from(this.contracts.entries()));
     }
 
-    async getRegisteredContracts(){
+    getRegisteredContracts(){
         console.log('Retrieving Registry:', Array.from(this.contracts.entries()));
         return Array.from(this.contracts.entries());
     }
+
+    getContractAddress(contractName){
+        return this.contracts.get(contractName);
+    }
+
+
+    async getAllEvents(contractName , contractAddress , eventName){
+
+        const contractABI = this.getAbi(contractName);
+        const myContract = new this.web3.eth.Contract(contractABI, contractAddress);
+
+        const events = await myContract.getPastEvents(eventName, {
+            fromBlock: 0, 
+            toBlock: 'latest', 
+        });
+
+        const sanitizedEvents = JSON.parse(JSON.stringify(events, (key, value) => 
+            typeof value === 'bigint' ? value.toString() : value
+          ));
+        return sanitizedEvents;
+    }
+
+
+    getExpenses(){
+        return this.expenseService.getExpenses();
+    }
+    
 }
 
 
 module.exports = BlockchainService;
-
-// Configura el proveedor y dirección del contrato
-// const contractABI = require("./contractABI.json");
-// const contractAddress = process.env.CONTRACT_ADDRESS;
-// const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 
 

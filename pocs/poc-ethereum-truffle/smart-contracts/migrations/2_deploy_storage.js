@@ -1,9 +1,8 @@
-const Storage = artifacts.require("Storage");
-const Registry = artifacts.require("Registry");
 const axios = require('axios');
 
 const { getContractNames } = require('./deploy_utils');
 
+const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
 
 module.exports = async function (deployer , network) {
 
@@ -24,7 +23,7 @@ module.exports = async function (deployer , network) {
 
                 console.log(`Registro de Storage en la Registry`);
                 
-                await axios.post('http://poc-ethereum-dapp:3000/api/contracts/register' , {
+                await axios.post( CONTRACTS_REGISTRY_URL , {
                     contractName: contractName,
                     contractAddress: contractInstance.address
                 });

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract EnvironmentalData {
+contract EnvironmentalDataStoredSingle {
     // Estructura para almacenar los datos ambientales
     struct EnvironmentalReading {
         uint256 timestamp; // Marca de tiempo
@@ -12,7 +12,7 @@ contract EnvironmentalData {
     }
 
     // Arreglo dinámico para almacenar el historial de lecturas
-    // EnvironmentalReading[] public reading;
+    EnvironmentalReading public reading;
 
     // Evento para notificar que se registró una nueva lectura
     event NewReading(
@@ -31,24 +31,23 @@ contract EnvironmentalData {
         uint256 _luminosity
     ) public {
         // Crear una nueva lectura
-        // EnvironmentalReading memory newReading = EnvironmentalReading({
-        //     timestamp: block.timestamp,
-        //     temperature: _temperature,
-        //     pressure: _pressure,
-        //     humidity: _humidity,
-        //     luminosity: _luminosity
-        // });
+        EnvironmentalReading memory newReading = EnvironmentalReading({
+            timestamp: block.timestamp,
+            temperature: _temperature,
+            pressure: _pressure,
+            humidity: _humidity,
+            luminosity: _luminosity
+        });
 
-        // reading = newReading;
-        // reading.push(newReading);
+        reading = newReading;
 
         // Emitir el evento
         emit NewReading(block.timestamp, _temperature, _pressure, _humidity, _luminosity);
     }
 
 
-    // function getReading() public view returns (EnvironmentalReading[] memory) {
-    //     return reading;
-    // }
+    function getReading() public view returns (EnvironmentalReading memory) {
+        return reading;
+    }
 
 }
