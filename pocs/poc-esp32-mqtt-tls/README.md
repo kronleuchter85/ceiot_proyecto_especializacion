@@ -25,7 +25,7 @@ al inicio del archivo, colocando los datos correctos del broker a utilizar.
 ## Configurar certificados:
 
 En los archivos client.crt, client.key y broker_CA.crt, hay que pegar el contenido
-de los certificados que se crean con el script crea_certs.sh.
+de los certificados que se crean con el script crea_certs.sh. O reemplazar client.crt, client.key y broker_CA.crt en main por los generados.
 Recordar reemplazar la IP que se encuentra dentro del script, por TU IP LOCAL
 
 
