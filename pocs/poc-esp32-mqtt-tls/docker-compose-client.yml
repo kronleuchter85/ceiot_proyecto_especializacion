@@ -7,9 +7,7 @@ services:
     image: daoit/daoit-esp32-mqtt-tls
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
-    stdin_open: true
-    tty: true
     volumes:
       - .:/project
-    command: idf.py flash --port /dev/ttyUSB0
+    command: idf.py clean build flash --port /dev/ttyUSB0
   
