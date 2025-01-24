@@ -25,10 +25,9 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
-#include <bmp280.h>
 
 // Set your local broker URI
-#define BROKER_URI "mqtts://192.168.0.3:1884"
+#define BROKER_URI "mqtts://a2jlrwil23uep5-ats.iot.eu-west-2.amazonaws.com:8883"
 
 
 static const char *TAG = "MQTTS_EXAMPLE";
@@ -70,14 +69,14 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-        msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        // msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
+        // ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-        msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        // msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
+        // ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-        msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
-        ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
+        // msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
+        // ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -85,8 +84,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
     case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-        msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
-        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+        // msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
+        // ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_UNSUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
@@ -126,6 +125,7 @@ void get_timestamp(char * timestamp){
 static void mqtt_app_start(void)
 {
     const esp_mqtt_client_config_t mqtt_cfg = {
+        .client_id = "test1",
         .uri = BROKER_URI,
         .client_cert_pem = (const char *)client_cert_pem_start,
         .client_key_pem = (const char *)client_key_pem_start,
@@ -160,14 +160,14 @@ static void mqtt_app_start(void)
         //
         memset(body , '\0' , sizeof(body));
         sprintf(body, BODY, "12ad-dao23-ux23" , "Temperature" , (float) temperature/10  , "40.741895:-73.989308" , timestamp);
-        esp_mqtt_client_publish(client, "/topic/measures", body, strlen(body), 1, 0);
+        esp_mqtt_client_publish(client, "readings", body, strlen(body), 1, 0);
         
         //
         // sending Humidity
         //
         memset(body , '\0' , sizeof(body));
         sprintf(body, BODY, "7dd7-80d78-xy3d" , "Humidity" , (float) humidity/10  , "40.741895:-73.989308", timestamp);
-        esp_mqtt_client_publish(client, "/topic/measures", body, strlen(body), 1, 0);
+        esp_mqtt_client_publish(client, "readings", body, strlen(body), 1, 0);
 
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
@@ -200,5 +200,5 @@ void app_main(void)
      */
     ESP_ERROR_CHECK(example_connect());
 
-    // mqtt_app_start();
+    mqtt_app_start();
 }
