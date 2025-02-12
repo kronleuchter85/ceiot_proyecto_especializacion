@@ -11,7 +11,7 @@ COPY . .
 RUN truffle init
 RUN truffle compile 
 
-RUN npm install axios
+RUN npm install axios @truffle/hdwallet-provider
 RUN npm install
 # RUN truffle migrate --network development
 
