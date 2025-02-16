@@ -41,10 +41,13 @@
  * https://trufflesuite.com/docs/truffle/getting-started/using-the-truffle-dashboard/
  */
 
-// require('dotenv').config();
-// const { MNEMONIC, PROJECT_ID } = process.env;
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+require('dotenv').config();
+const { MNEMONIC , BLOCKCHAIN_URL } = process.env;
+console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
+console.log(`MNEMONIC ${MNEMONIC}`);
 
 module.exports = {
   /**
@@ -58,11 +61,33 @@ module.exports = {
    */
 
   networks: {
+
     development: {
       host: "ganache", // Dirección de Ganache en el host local
       port: 7545,        // Puerto donde Ganache está corriendo
       network_id: "*",   // Conecta a cualquier red
     },
+
+
+    sepolia: {
+      provider: () => new HDWalletProvider(
+        MNEMONIC, // Frase secreta de MetaMask
+        `${BLOCKCHAIN_URL}` // Infura como proveedor
+      ),
+      gas: 3000000, // Límite de gas
+      gasPrice: 5000000000, // 5 Gwei
+      network_id: 11155111, // ID de la red Sepolia
+      skipDryRun: true, // Evita correr una simulación en dry-run antes del despliegue
+      
+      // confirmations: 2, // Nº de confirmaciones antes de considerar la transacción válida
+      // timeoutBlocks: 200, // Nº de bloques de espera antes de fallar
+
+
+
+      pollingInterval: 1800000,
+      disableConfirmationListener: true,
+    },
+  
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache, geth, or parity) in a separate terminal

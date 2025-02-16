@@ -10,11 +10,11 @@ services:
       dockerfile: Dockerfile
     image: poc-ethereum-smart-contracts-deployer
     container_name: poc-ethereum-smart-contracts-deployer
-    depends_on:
-      - ganache
     volumes:
       - ./abi:/app/build/contracts
-    command: truffle migrate --network development & 
+    env_file:
+      - ./dev.env
+    command: truffle migrate --network sepolia & 
     stdin_open: true
     tty: true
   
@@ -29,12 +29,10 @@ services:
       dockerfile: Dockerfile
     image: poc-ethereum-dapp
     container_name: poc-ethereum-dapp
-    depends_on:
-      - ganache
     volumes:
       - ./dapp/index.js:/app/index.js
       - ./abi:/app/abi
-    environment:
-      - BLOCKCHAIN_URL=http://ganache:7545
+    env_file:
+      - ./dev.env
     ports:
         - "3000:3000"
