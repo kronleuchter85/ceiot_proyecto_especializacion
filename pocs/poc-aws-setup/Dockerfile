@@ -4,5 +4,11 @@ WORKDIR /workspace
 
 COPY terraform/* /workspace/
 
-entrypoint ["terraform", "apply"]
+# COPY entrypoint-create.sh /entrypoint-create.sh
+
+# RUN chmod +x /entrypoint.sh
+
+# ENTRYPOINT ["/entrypoint.sh"]
+
+# entrypoint ["terraform", "apply"]
 # CMD ["terraform", "-version"]
