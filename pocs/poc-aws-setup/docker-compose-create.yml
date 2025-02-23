@@ -16,6 +16,7 @@ services:
         rm -f terraform.lock.hcl &&
         terraform init &&
         terraform plan &&
-        terraform apply -auto-approve
+        terraform apply -auto-approve &&
+        rm -rf .terraform .terraform.lock.hcl
       "
   

@@ -13,6 +13,7 @@ services:
     working_dir: /workspace
     command: >
       sh -c "
-        terraform destroy -auto-approve
+        terraform destroy -auto-approve &&
+        rm -rf .terraform .terraform.lock.hcl
       "
   
