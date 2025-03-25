@@ -9,6 +9,16 @@ const blockchainService = new BlockchainService(process.env.BLOCKCHAIN_URL);
 
 app.use(bodyParser.json());
 
+
+app.get("/api/greetings", async (req, res) => {
+  try {
+      message = ["hola" , "como" , "estas?"];
+      res.json({ message });
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/accounts", async (req, res) => {
   try {
       accounts = await blockchainService.getAccounts();
