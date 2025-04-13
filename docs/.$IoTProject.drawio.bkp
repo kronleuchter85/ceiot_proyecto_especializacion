@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2025-03-24T16:27:42.895Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.8 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="gk00fq0ja2fE4bdoPTkr" version="24.4.8" type="device" pages="3">
+<mxfile host="Electron" modified="2025-03-25T17:52:33.393Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.8 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="HlhoSHhhp50o65ihNPmD" version="24.4.8" type="device" pages="3">
   <diagram id="6CZI-lEMu_QAiLZUZ20o" name="Alternativas Arquitecturas">
     <mxGraphModel dx="3457" dy="2682" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -629,6 +629,10 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="30" y="265" as="sourcePoint" />
             <mxPoint x="250" y="268.5" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="141" y="265" />
+              <mxPoint x="141" y="269" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="qUHikWi2I_9gn5ECpNe5-1" value="AWS Dynamo" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.dynamo_db;fillColor=#2E73B8;gradientColor=none;" parent="1" vertex="1">
@@ -665,7 +669,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="qUHikWi2I_9gn5ECpNe5-14" value="AWS App Runner" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.app_runner;" parent="1" vertex="1">
-          <mxGeometry x="276.5" y="760" width="78" height="78" as="geometry" />
+          <mxGeometry x="470" y="520" width="78" height="78" as="geometry" />
         </mxCell>
         <mxCell id="qUHikWi2I_9gn5ECpNe5-15" value="AWS IoT Core" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.aws_iot;fillColor=#5294CF;gradientColor=none;" parent="1" vertex="1">
           <mxGeometry x="-30" y="220" width="67.5" height="81" as="geometry" />
@@ -684,6 +688,12 @@
         </mxCell>
         <mxCell id="qUHikWi2I_9gn5ECpNe5-20" value="&lt;ul&gt;&lt;li&gt;Alchemy project ID&lt;/li&gt;&lt;li&gt;account address&lt;/li&gt;&lt;li&gt;URLs&lt;/li&gt;&lt;/ul&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;" parent="1" vertex="1">
           <mxGeometry x="870" y="498" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="TzqmEd7ZumtjvxXthdnN-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TzqmEd7ZumtjvxXthdnN-1" target="qUHikWi2I_9gn5ECpNe5-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TzqmEd7ZumtjvxXthdnN-1" value="Amazon QuickSight" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;fillColor=#232F3E;dashed=0;verticalLabelPosition=middle;verticalAlign=bottom;align=center;html=1;whiteSpace=wrap;fontSize=10;fontStyle=1;spacing=3;shape=mxgraph.aws4.productIcon;prIcon=mxgraph.aws4.quicksight;" vertex="1" parent="1">
+          <mxGeometry x="890" y="10" width="80" height="110" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

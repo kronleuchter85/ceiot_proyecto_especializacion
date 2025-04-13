@@ -26,14 +26,29 @@
 #include "mqtt_client.h"
 
 
+
+
+#include <sys/time.h>
+#include "esp_sntp.h"
+
+
+
+
 // Set your local broker URI
 #define BROKER_URI "mqtts://a2jlrwil23uep5-ats.iot.eu-west-2.amazonaws.com:8883"
 
 
+#define LAT_MIN -55.0f
+#define LAT_MAX -22.0f
+#define LON_MIN -73.0f
+#define LON_MAX -53.0f
+
+
+
+
 static const char *TAG = "MQTTS_EXAMPLE";
 
-
-static char *BODY = "{\"deviceId\":\"%s\" , \"type\":\"%s\", \"value\":\"%0.2f\", \"location\":\"%s\", \"time\":\"%s\"}";
+static char *BODY = "{\"deviceId\":\"%s\" , \"type\":\"%s\", \"value\":\"%0.2f\", \"geoLat\":\"%0.6f\",\"geoLong\":\"%0.6f\", \"date\":\"%s\" , \"time\":\"%s\"}";
 
 
 extern const uint8_t client_cert_pem_start[] asm("_binary_client_crt_start");
@@ -43,12 +58,62 @@ extern const uint8_t client_key_pem_end[] asm("_binary_client_key_end");
 extern const uint8_t server_cert_pem_start[] asm("_binary_broker_CA_crt_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_broker_CA_crt_end");
 
+
 static void log_error_if_nonzero(const char *message, int error_code)
 {
     if (error_code != 0) {
         ESP_LOGE(TAG, "Last error %s: 0x%x", message, error_code);
     }
 }
+
+// 
+// coordenadas
+// 
+
+float generar_latitud_arg() {
+    return ((float)rand() / RAND_MAX) * (LAT_MAX - LAT_MIN) + LAT_MIN;
+}
+
+float generar_longitud_arg() {
+    return ((float)rand() / RAND_MAX) * (LON_MAX - LON_MIN) + LON_MIN;
+}
+
+
+// 
+// time SNTP 
+// 
+
+void initialize_sntp(void)
+{
+    ESP_LOGI(TAG, "Inicializando SNTP");
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, "pool.ntp.org");  // Puedes usar otros servidores
+    sntp_init();
+}
+
+void obtain_time(void)
+{
+    initialize_sntp();
+
+    time_t now = 0;
+    struct tm timeinfo = { 0 };
+    int retry = 0;
+    const int retry_count = 10;
+
+    while (timeinfo.tm_year < (2020 - 1900) && ++retry < retry_count) {
+        ESP_LOGI(TAG, "Esperando sincronización NTP... (%d/%d)", retry, retry_count);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        time(&now);
+        localtime_r(&now, &timeinfo);
+    }
+
+    if (retry < retry_count) {
+        ESP_LOGI(TAG, "Hora sincronizada: %s", asctime(&timeinfo));
+    } else {
+        ESP_LOGW(TAG, "No se pudo sincronizar hora con NTP");
+    }
+}
+
 
 /*
  * @brief Event handler registered to receive MQTT events
@@ -114,6 +179,25 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     }
 }
 
+
+
+void get_date_str(char * date_str , int len){
+    time_t rawtime;
+    struct tm *info;
+    time( &rawtime );
+    info = localtime( &rawtime );
+    strftime(date_str,len,"%Y-%m-%d", info);
+}
+
+
+void get_time_str(char * times_str , int len){
+    time_t rawtime;
+    struct tm *info;
+    time( &rawtime );
+    info = localtime( &rawtime );
+    strftime(times_str,len,"%H:%M:%S", info);
+}
+
 void get_timestamp(char * timestamp){
     time_t rawtime;
     struct tm *info;
@@ -143,6 +227,10 @@ static void mqtt_app_start(void)
 
     float pressure = 0.0, temperature= 0.0, humidity= 0.0;
 
+
+
+    initialize_sntp();
+
     while(1){
 
 
@@ -155,18 +243,29 @@ static void mqtt_app_start(void)
         memset(timestamp , '\0' , sizeof(timestamp));
         get_timestamp(timestamp);
 
+
+
+        char date_str[10];
+        memset(date_str , '\0' , sizeof(date_str));
+        get_date_str(date_str, sizeof(date_str));
+
+        char time_str[10];
+        memset(time_str , '\0' , sizeof(time_str));
+        get_time_str(time_str , sizeof(time_str));
+
+
         //
         // sending Temperature
         //
         memset(body , '\0' , sizeof(body));
-        sprintf(body, BODY, "12ad-dao23-ux23" , "Temperature" , (float) temperature/10  , "40.741895:-73.989308" , timestamp);
+        sprintf(body, BODY, "12ad-dao23-ux23" , "Temperature" , (float) temperature/10  , generar_latitud_arg() ,generar_longitud_arg() , date_str , time_str);
         esp_mqtt_client_publish(client, "readings", body, strlen(body), 1, 0);
         
         //
         // sending Humidity
         //
         memset(body , '\0' , sizeof(body));
-        sprintf(body, BODY, "7dd7-80d78-xy3d" , "Humidity" , (float) humidity/10  , "40.741895:-73.989308", timestamp);
+        sprintf(body, BODY, "7dd7-80d78-xy3d" , "Humidity" , (float) humidity/10  , generar_latitud_arg() ,generar_longitud_arg(), date_str , time_str);
         esp_mqtt_client_publish(client, "readings", body, strlen(body), 1, 0);
 
         vTaskDelay(5000 / portTICK_PERIOD_MS);

@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "readings",
+    "type": "object",
+    "properties": {
+      "deviceId": {"type": "string"},
+      "type": {"type": "string"},
+      "value": {"type": "string"},
+      "geoLat": {"type": "string"},
+      "geoLong": {"type": "string"},
+      "time": {"type": "string"}
+    },
+    "required": ["deviceId", "type", "value", "geoLat","geoLong" , "time"]
+  }
+  

@@ -1,0 +1,37 @@
+[
+    {
+      "Name": "deviceId",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+      "Name": "type",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+      "Name": "value",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+      "Name": "geoLat",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+      "Name": "geoLong",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+      "Name": "date",
+      "Type": "string",
+      "Comment": ""
+    },
+    {
+        "Name": "time",
+        "Type": "string",
+        "Comment": ""
+      }
+  ]
