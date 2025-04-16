@@ -1,1 +1,9 @@
-{"deviceId":"12ad-dao23-ux23" , "type":"Temperature", "value":"0.00", "location":"40.741895:-73.989308", "time":"1970-01-01 00:00:05"}
+{
+    "deviceId": "12ad-dao23-ux23",
+    "type": "Temperature",
+    "value": "0.00",
+    "geoLat": "-26.056772",
+    "geoLong": "-64.014824",
+    "date": "2025-04-1",
+    "time": "11:23:59"
+}
