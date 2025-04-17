@@ -46,8 +46,8 @@ const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 require('dotenv').config();
 const { MNEMONIC , BLOCKCHAIN_URL } = process.env;
-console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
-console.log(`MNEMONIC ${MNEMONIC}`);
+// console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
+// console.log(`MNEMONIC ${MNEMONIC}`);
 
 module.exports = {
   /**
@@ -72,7 +72,7 @@ module.exports = {
     sepolia: {
       provider: () => new HDWalletProvider(
         MNEMONIC, // Frase secreta de MetaMask
-        `${BLOCKCHAIN_URL}` // Infura como proveedor
+        `${BLOCKCHAIN_URL}` // URL RPC de la Red a la cual se despliega
       ),
       gas: 3000000, // Límite de gas
       gasPrice: 5000000000, // 5 Gwei
@@ -81,8 +81,6 @@ module.exports = {
       
       // confirmations: 2, // Nº de confirmaciones antes de considerar la transacción válida
       // timeoutBlocks: 200, // Nº de bloques de espera antes de fallar
-
-
 
       pollingInterval: 1800000,
       disableConfirmationListener: true,
