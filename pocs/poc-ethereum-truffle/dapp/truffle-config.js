@@ -82,6 +82,26 @@ module.exports = {
       skipDryRun: true // Evita correr una simulación en dry-run antes del despliegue
     },
   
+
+    holesky: {
+      provider: () => new HDWalletProvider(
+        MNEMONIC, // Frase secreta de MetaMask
+        `${BLOCKCHAIN_URL}` // URL RPC de la Red a la cual se despliega
+      ),
+      gas: 3000000, // Límite de gas
+      gasPrice: 5000000000, // 5 Gwei
+      network_id: 17000, // ID de la red Holesky
+      skipDryRun: true, // Evita correr una simulación en dry-run antes del despliegue
+      
+      // confirmations: 2, // Nº de confirmaciones antes de considerar la transacción válida
+      // timeoutBlocks: 200, // Nº de bloques de espera antes de fallar
+
+      pollingInterval: 1800000,
+      disableConfirmationListener: true,
+    },
+  
+
+
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache, geth, or parity) in a separate terminal

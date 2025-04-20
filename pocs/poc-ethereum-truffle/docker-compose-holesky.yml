@@ -1,0 +1,38 @@
+# version: "3.8"
+   
+services:
+
+
+      
+  # smart-contracts-deployer:
+  #   build:
+  #     context: ./smart-contracts
+  #     dockerfile: Dockerfile
+  #   image: poc-ethereum-smart-contracts-deployer
+  #   container_name: poc-ethereum-smart-contracts-deployer
+  #   volumes:
+  #     - ./abi:/app/build/contracts
+  #   env_file:
+  #     - ./dev.env
+  #   command: truffle migrate --network holesky & 
+  #   stdin_open: true
+  #   tty: true
+  
+
+
+
+
+
+  dapp:
+    build:
+      context: ./dapp
+      dockerfile: Dockerfile
+    image: poc-ethereum-dapp
+    container_name: poc-ethereum-dapp
+    volumes:
+      - ./dapp/index.js:/app/index.js
+      - ./abi:/app/abi
+    env_file:
+      - ./dev.env
+    ports:
+        - "3000:3000"
