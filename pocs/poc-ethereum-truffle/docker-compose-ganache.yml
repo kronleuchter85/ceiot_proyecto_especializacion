@@ -30,7 +30,7 @@ services:
       - ./abi:/app/build/contracts
     env_file:
       - ./_ganache.env
-    command: truffle migrate --network development & 
+    command: truffle migrate --network ganache & 
     stdin_open: true
     tty: true
   

@@ -14,7 +14,7 @@ const wallet_private_key = process.env.WALLET_PRIVATE_KEY;
 // 
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
-// const swaggerDocument = yaml.load(fs.readFileSync('./openapi.yaml', 'utf8'));
+// const swaggerDocument = yaml.load(fs.readFileSync('./openapi.yml'));
 const swaggerDocument = JSON.parse(fs.readFileSync('./openapi.json'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

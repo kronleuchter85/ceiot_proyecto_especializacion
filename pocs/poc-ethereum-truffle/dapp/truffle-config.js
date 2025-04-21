@@ -62,7 +62,7 @@ module.exports = {
 
   networks: {
 
-    development: {
+    ganache: {
       host: "ganache", // Dirección de Ganache en el host local
       port: 7545,        // Puerto donde Ganache está corriendo
       network_id: "*",   // Conecta a cualquier red
