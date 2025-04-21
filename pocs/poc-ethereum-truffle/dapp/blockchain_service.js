@@ -1,4 +1,12 @@
 // const axios = require('axios');
+
+
+
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+
+
+
+
 const {Web3} = require("web3");
 const ExpenseService = require('./expenses_service'); 
 const fs = require('fs');
@@ -12,7 +20,30 @@ const ABI_DIR = '/app/abi';
 class BlockchainService {
 
     constructor(providerUrl){
-        this.web3 = new Web3(providerUrl);
+
+
+
+        console.log(`Mnemonic: ${process.env.MNEMONIC}`);
+        console.log(`Provider URL: ${providerUrl}`);
+
+
+        if(process.env.MNEMONIC == undefined){
+            console.log('Initializing Dev provider for Ganache...');
+            this.web3 = new Web3(providerUrl);
+        }else{
+            
+            console.log('Initializing Network provider for Test Network...');
+
+            const provider = new HDWalletProvider({
+                mnemonic: {
+                  phrase: process.env.MNEMONIC
+                },
+                providerOrUrl: providerUrl
+              });
+              this.web3 = new Web3(provider);
+        }
+          
+        // 
         this.contracts = new Map();
         this.expenseService = new ExpenseService(providerUrl);
     }

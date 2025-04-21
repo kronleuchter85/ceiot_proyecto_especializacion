@@ -46,8 +46,8 @@ const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 require('dotenv').config();
 const { MNEMONIC , BLOCKCHAIN_URL } = process.env;
-// console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
-// console.log(`MNEMONIC ${MNEMONIC}`);
+console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
+console.log(`MNEMONIC ${MNEMONIC}`);
 
 module.exports = {
   /**

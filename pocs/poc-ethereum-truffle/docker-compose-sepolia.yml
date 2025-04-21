@@ -13,7 +13,7 @@ services:
     volumes:
       - ./abi:/app/build/contracts
     env_file:
-      - ./dev.env
+      - ./_sepolia.env
     command: truffle migrate --network sepolia & 
     stdin_open: true
     tty: true
@@ -33,6 +33,6 @@ services:
       - ./dapp/index.js:/app/index.js
       - ./abi:/app/abi
     env_file:
-      - ./dev.env
+      - ./_sepolia.env
     ports:
         - "3000:3000"
