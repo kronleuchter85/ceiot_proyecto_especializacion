@@ -107,7 +107,7 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
     res.json({ result });
   } catch (error) {
     console.error("Error reading contract:", error);
-    res.status(500).json({ error: "Contract ABI not found", details: error.message });
+    res.status(500).json({ error: "Error writing contract", details: error.message });
   }
 });
 
@@ -121,24 +121,24 @@ app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const account = await blockchainService.getFirstAccount();
   const contractAddress = blockchainService.getContractAddress(contractName);
 
-  console.log(`Account: ${account}`);
-  console.log(`PK: ${privateKey}`);
-  console.log(`Value: ${value}`);
+  // console.log(`Account: ${account}`);
+  // console.log(`PK: ${privateKey}`);
+  // console.log(`Value: ${value}`);
   if (!value || !account || !privateKey) {
-    return res.status(400).json({ error: "Todos los parámetros son obligatorios: param1, param2, param3, param4" });
+    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account, PK, o valor" });
   }
 
   try {
     const result = await blockchainService.send(contractName , contractAddress , method , value, account, privateKey);
 
     res.status(200).json({
-      message: "Parámetros recibidos correctamente",
-      receipt: result
+      message: "Transaccion realizada con exito",
+      result: result
     });
 
   } catch (error) {
-    console.error("Contract ABI not found:", error);
-    res.status(500).json({ error: "Contract ABI not found", details: error.message });
+    console.error("Error writing contract:", error);
+    res.status(500).json({ error: "Error writing contract", details: error.message });
   }
 });
 

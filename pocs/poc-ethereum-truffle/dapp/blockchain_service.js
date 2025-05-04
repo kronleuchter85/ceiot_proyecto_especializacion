@@ -142,18 +142,29 @@ class BlockchainService {
         try{
             
             const signedTx = await this.web3.eth.accounts.signTransaction(txData, privateKey);
-            const receipt = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+            console.log(`Signed TX: ${signedTx}`);
+
+            let receipt = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
     
-            const sanitizedReceipt = JSON.parse(JSON.stringify(receipt, (key, value) => 
+            receipt = JSON.parse(JSON.stringify(receipt, (key, value) => 
                 typeof value === 'bigint' ? value.toString() : value
               ));
-            console.log(`Transacción enviada con éxito:`, sanitizedReceipt);
+              
+            const gasUsed = receipt['gasUsed'];
+            
+            const expenseInfo = this.expenseService.getExpenseInformation(contractName , methodName , gasUsed , gasPrice);
+            
+            this.expenseService.addExpenseInformation(expenseInfo);
 
-            const gasUsed = sanitizedReceipt['gasUsed'];
-
-            this.expenseService.addExpense(contractName , methodName , gasUsed , gasPrice);
-
-            return sanitizedReceipt;
+            let result = {
+                contractName: contractName,
+                methodName: methodName,
+                txReceipt: receipt,
+                txExpense: expenseInfo
+            } 
+              
+            console.log(`Transacción enviada con éxito:`, result);
+            return result;
 
         } catch (error) {
             console.error(`Error al invocar el método de escritura:`, error);

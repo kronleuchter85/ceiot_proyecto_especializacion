@@ -31,17 +31,22 @@ class ExpenseService {
         }
     }
 
-    addExpense(contractName , methodName , gasUsed , gasPrice){
+    addExpenseInformation(expenseInfo){
+        this.expenses.push(expenseInfo);
+    }
+
+    getExpenseInformation(contractName , methodName , gasUsed , gasPrice){
         const gasCostInETH = BigInt(gasUsed) * BigInt(gasPrice);
         const gasCostInETHFormatted = this.web3.utils.fromWei(gasCostInETH, 'ether');
         const gasCostInUSD = parseFloat(gasCostInETHFormatted) * this.ethUsdRate;
-        this.expenses.push({
+        const expenseInfo = {
             'operation':`${contractName}.${methodName}`,
             'gasUsed': gasUsed,
             'costEth': gasCostInETHFormatted,
             'eth/usd': this.ethUsdRate,
             'costUSD': gasCostInUSD
-        })
+        };
+        return expenseInfo;
     }
 
     getExpenses(){
