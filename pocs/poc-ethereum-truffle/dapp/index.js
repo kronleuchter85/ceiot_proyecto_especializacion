@@ -34,7 +34,7 @@ app.get("/api/greetings", async (req, res) => {
 
 app.get("/api/accounts", async (req, res) => {
   try {
-      accounts = await blockchainService.getAccounts();
+      accounts = await blockchainService.getAllAccounts();
       res.json({ accounts });
   } catch (err) {
       res.status(500).json({ error: err.message });
@@ -106,7 +106,7 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 
     res.json({ result });
   } catch (error) {
-    console.error("Contract ABI not found:", error);
+    console.error("Error reading contract:", error);
     res.status(500).json({ error: "Contract ABI not found", details: error.message });
   }
 });
@@ -116,10 +116,14 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 //
 app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const { contractName ,  method } = req.params;
-  const { value, account } = req.body;
+  const { value } = req.body;
   const privateKey = wallet_private_key;
+  const account = await blockchainService.getFirstAccount();
   const contractAddress = blockchainService.getContractAddress(contractName);
 
+  console.log(`Account: ${account}`);
+  console.log(`PK: ${privateKey}`);
+  console.log(`Value: ${value}`);
   if (!value || !account || !privateKey) {
     return res.status(400).json({ error: "Todos los parámetros son obligatorios: param1, param2, param3, param4" });
   }

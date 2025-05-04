@@ -48,8 +48,16 @@ class BlockchainService {
         this.expenseService = new ExpenseService(providerUrl);
     }
 
-    async getAccounts(){
-        return await this.web3.eth.getAccounts();
+
+
+    async getFirstAccount(){
+        const accounts = await this.web3.eth.getAccounts();
+        return accounts[0];
+    }
+
+    async getAllAccounts(){
+        const accounts = await this.web3.eth.getAccounts();
+        return accounts;
     }
 
     async getLastNBlocks(n) {

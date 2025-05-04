@@ -152,10 +152,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "value": { "type": "string" },
-                    "account": { "type": "string" }
+                    "value": { "type": "string" }
+                    
                   },
-                  "required": ["value", "account"]
+                  "required": ["value"]
                 }
               }
             }
