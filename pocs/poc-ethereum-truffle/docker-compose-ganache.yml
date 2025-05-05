@@ -20,8 +20,8 @@ services:
 
   smart-contracts-deployer:
     build:
-      context: ./smart-contracts
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: smart-contracts.Dockerfile
     image: poc-ethereum-smart-contracts-deployer
     container_name: poc-ethereum-smart-contracts-deployer
     depends_on:
@@ -33,9 +33,28 @@ services:
       - ./_ganache.env
     environment:
       - AWS_PROFILE=dev 
-    command: truffle migrate --network ganache & 
+    command: /bin/bash -c "truffle migrate --network ganache || true; sleep infinity"
     stdin_open: true
     tty: true
+
+  # smart-contracts-deployer:
+  #   build:
+  #     context: ./smart-contracts
+  #     dockerfile: Dockerfile
+  #   image: poc-ethereum-smart-contracts-deployer
+  #   container_name: poc-ethereum-smart-contracts-deployer
+  #   depends_on:
+  #     - ganache
+  #   volumes:
+  #     - ./abi:/app/build/contracts
+  #     - ~/.aws:/root/.aws
+  #   env_file:
+  #     - ./_ganache.env
+  #   environment:
+  #     - AWS_PROFILE=dev 
+  #   command: /bin/bash -c "truffle migrate --network ganache || true; sleep infinity"
+  #   stdin_open: true
+  #   tty: true
   
 
 
