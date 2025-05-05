@@ -2,6 +2,7 @@ const axios = require('axios');
 
 const pretty = require('json-stringify-safe');
 const { getContractNames } = require('./deploy_utils');
+const { saveContract, getEntity, saveEntity } = require('./repository');
 
 const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
 
@@ -28,7 +29,7 @@ module.exports = async function (deployer, network) {
                     contractAddress: Contract.address,
                     contractABI: contractInstance.abi ,
                     contractTransactionHash: Contract.transactionHash,
-                    contractBlock: receipt.blockNumber
+                    contractBlockNumber: receipt.blockNumber
                 }
 
                 console.log(`Detalles del Depliegue de`);
@@ -44,6 +45,16 @@ module.exports = async function (deployer, network) {
                     contractName: contractName,
                     contractAddress: contractInstance.address
                 });
+
+
+                console.log('Almacenando en Dynamo');
+
+
+                await saveEntity('contracts' ,contractInfo);
+
+                let info2 = await getEntity('contracts' , {contractName: contractInfo.contractName });
+
+                console.log(info2);
 
             } catch (error) {
                 console.error(`Error desplegando el contrato ${contractName}:`, error);

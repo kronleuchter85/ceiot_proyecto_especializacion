@@ -1,0 +1,69 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "temperature",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pressure",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "humidity",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "luminosity",
+        "type": "uint256"
+      }
+    ],
+    "name": "NewReading",
+    "type": "event",
+    "signature": "0x8f66fe1cf1407981d81a8b94f3a1e0db828c5488042fd7c5be8003d760743383"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "_temperature",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_pressure",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_humidity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_luminosity",
+        "type": "uint256"
+      }
+    ],
+    "name": "recordReading",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "signature": "0x5e34a5ac"
+  }
+]

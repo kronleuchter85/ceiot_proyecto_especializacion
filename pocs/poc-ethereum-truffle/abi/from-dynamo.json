@@ -1,0 +1,75 @@
+{
+  "contractAddress": "0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0",
+  "name": "EnvironmentalData",
+  "contractABI": [
+    {
+      "name": "NewReading",
+      "anonymous": false,
+      "type": "event",
+      "signature": "0x8f66fe1cf1407981d81a8b94f3a1e0db828c5488042fd7c5be8003d760743383",
+      "inputs": [
+        {
+          "name": "timestamp",
+          "internalType": "uint256",
+          "type": "uint256",
+          "indexed": true
+        },
+        {
+          "name": "temperature",
+          "internalType": "int256",
+          "type": "int256",
+          "indexed": false
+        },
+        {
+          "name": "pressure",
+          "internalType": "uint256",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "humidity",
+          "internalType": "uint256",
+          "type": "uint256",
+          "indexed": false
+        },
+        {
+          "name": "luminosity",
+          "internalType": "uint256",
+          "type": "uint256",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "name": "recordReading",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "signature": "0x5e34a5ac",
+      "inputs": [
+        {
+          "name": "_temperature",
+          "type": "int256",
+          "internalType": "int256"
+        },
+        {
+          "name": "_pressure",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_humidity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_luminosity",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ]
+    }
+  ],
+  "contractBlock": 1,
+  "contractTransactionHash": "0xd634eff148cf6f4a6113d5a119534a00a07a4f24d8204e8886d7dff6d04ad231"
+}

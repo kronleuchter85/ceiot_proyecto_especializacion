@@ -6,7 +6,7 @@ WORKDIR /app
 
 
 # Instala Truffle globalmente
-RUN npm install axios dotenv @truffle/hdwallet-provider  json-stringify-safe
+RUN npm install axios dotenv @truffle/hdwallet-provider  json-stringify-safe @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 # RUN npm install
 RUN npm install -g truffle
 

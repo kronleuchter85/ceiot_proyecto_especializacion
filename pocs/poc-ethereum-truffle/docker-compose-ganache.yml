@@ -28,8 +28,11 @@ services:
       - ganache
     volumes:
       - ./abi:/app/build/contracts
+      - ~/.aws:/root/.aws
     env_file:
       - ./_ganache.env
+    environment:
+      - AWS_PROFILE=dev 
     command: truffle migrate --network ganache & 
     stdin_open: true
     tty: true
