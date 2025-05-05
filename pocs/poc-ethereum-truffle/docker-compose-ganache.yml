@@ -8,7 +8,7 @@ services:
       image: trufflesuite/ganache:latest
       container_name: ganache
       ports:
-        - "7545:7545" # Exponer el puerto 7545 (Ganache CLI)
+        - "7545:7545"
       command:
         - --host=0.0.0.0 # Permitir conexiones desde cualquier host
         - --port=7545    # Puerto del servicio Ganache
@@ -27,7 +27,6 @@ services:
     depends_on:
       - ganache
     volumes:
-      - ./abi:/app/build/contracts
       - ~/.aws:/root/.aws
     env_file:
       - ./_ganache.env
@@ -36,29 +35,6 @@ services:
     command: /bin/bash -c "truffle migrate --network ganache || true; sleep infinity"
     stdin_open: true
     tty: true
-
-  # smart-contracts-deployer:
-  #   build:
-  #     context: ./smart-contracts
-  #     dockerfile: Dockerfile
-  #   image: poc-ethereum-smart-contracts-deployer
-  #   container_name: poc-ethereum-smart-contracts-deployer
-  #   depends_on:
-  #     - ganache
-  #   volumes:
-  #     - ./abi:/app/build/contracts
-  #     - ~/.aws:/root/.aws
-  #   env_file:
-  #     - ./_ganache.env
-  #   environment:
-  #     - AWS_PROFILE=dev 
-  #   command: /bin/bash -c "truffle migrate --network ganache || true; sleep infinity"
-  #   stdin_open: true
-  #   tty: true
-  
-
-
-
 
 
   dapp:
@@ -70,8 +46,6 @@ services:
     depends_on:
       - ganache
     volumes:
-      - ./dapp/index.js:/app/index.js
-      - ./abi:/app/abi
       - ~/.aws:/root/.aws
     env_file:
       - ./_ganache.env
@@ -79,18 +53,3 @@ services:
       - AWS_PROFILE=dev 
     ports:
         - "3000:3000"
-  # dapp:
-  #   build:
-  #     context: ./dapp
-  #     dockerfile: Dockerfile
-  #   image: poc-ethereum-dapp
-  #   container_name: poc-ethereum-dapp
-  #   depends_on:
-  #     - ganache
-  #   volumes:
-  #     - ./dapp/index.js:/app/index.js
-  #     - ./abi:/app/abi
-  #   env_file:
-  #     - ./_ganache.env
-  #   ports:
-  #       - "3000:3000"

@@ -1,62 +1,52 @@
 // const axios = require('axios');
 
-
-const {Repository} = require('./repository');
-
+const { Repository } = require('./repository');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+const { Web3 } = require("web3");
+const ExpenseService = require('./expenses_service');
 
-
-
-
-const {Web3} = require("web3");
-const ExpenseService = require('./expenses_service'); 
-const fs = require('fs');
-const path = require('path');
-
-const ABI_DIR = '/app/abi';
+// const fs = require('fs');
+// const path = require('path');
+// const ABI_DIR = '/app/abi';
 
 
 
 
 class BlockchainService {
 
-    constructor(providerUrl){
-
-
+    constructor(providerUrl) {
 
         console.log(`Mnemonic: ${process.env.MNEMONIC}`);
         console.log(`Provider URL: ${providerUrl}`);
 
-
-        if(process.env.MNEMONIC == undefined){
+        if (process.env.MNEMONIC == undefined) {
             console.log('Initializing Dev provider for Ganache...');
             this.web3 = new Web3(providerUrl);
-        }else{
-            
+        } else {
+
             console.log('Initializing Network provider for Test Network...');
 
             const provider = new HDWalletProvider({
                 mnemonic: {
-                  phrase: process.env.MNEMONIC
+                    phrase: process.env.MNEMONIC
                 },
                 providerOrUrl: providerUrl
-              });
-              this.web3 = new Web3(provider);
+            });
+            this.web3 = new Web3(provider);
         }
-          
-        // 
+
         this.contracts = new Map();
         this.expenseService = new ExpenseService(providerUrl);
     }
 
 
 
-    async getFirstAccount(){
-        const accounts = await this.web3.eth.getAccounts();
+    async getFirstAccount() {
+        const accounts = await this.getAllAccounts();
         return accounts[0];
     }
 
-    async getAllAccounts(){
+    async getAllAccounts() {
         const accounts = await this.web3.eth.getAccounts();
         return accounts;
     }
@@ -81,18 +71,18 @@ class BlockchainService {
             const block = await this.web3.eth.getBlock(blockNumber, true);
 
             if (block && block.transactions) {
-            
-            const transactions = await Promise.all(
-                block.transactions.map( async (tx) => {
-                return JSON.parse(
-                    JSON.stringify(tx, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
+
+                const transactions = await Promise.all(
+                    block.transactions.map(async (tx) => {
+                        return JSON.parse(
+                            JSON.stringify(tx, (key, value) => (typeof value === 'bigint' ? value.toString() : value))
+                        );
+                    })
                 );
-                }) 
-            );
-            return transactions;
+                return transactions;
             } else {
-            console.log(`No se encontraron transacciones en el bloque ${blockNumber}`);
-            return [];
+                console.log(`No se encontraron transacciones en el bloque ${blockNumber}`);
+                return [];
             }
         } catch (error) {
             console.error(`Error al obtener las transacciones del bloque ${blockNumber}:`, error);
@@ -100,68 +90,63 @@ class BlockchainService {
         }
     }
 
-    async getAbi(contractName){
-
-        let contractInfo = await Repository.getEntity('contracts' , {contractName: contractName });
-
-        return contractInfo.contractABI;
-
-
-
-        // return JSON.parse(fs.readFileSync(path.join(ABI_DIR, contractName + '.json'), 'utf8')).abi;
-    }
-
-    async call(contractName, contractAddress, methodName){
-        const abi = this.getAbi(contractName);
+    async call(contractName, methodName) {
+        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractAddress = contractInfo.contractAddress;
+        const abi = contractInfo.contractABI;
 
         const contract = new this.web3.eth.Contract(abi, contractAddress);
         const result = await contract.methods[methodName]().call();
-        const sanitizedResult = JSON.parse(JSON.stringify(result, (key, value) => 
+        const sanitizedResult = JSON.parse(JSON.stringify(result, (key, value) =>
             typeof value === 'bigint' ? value.toString() : value
-          ));
+        ));
         console.log(`Resultado:`, sanitizedResult);
         return sanitizedResult;
     }
 
-    async send(contractName, contractAddress, methodName , values , account , privateKey){
+    async send(contractName, methodName, values, account, privateKey) {
 
+        console.log(`${contractName}, ${methodName}, ${values}, ${account}, ${privateKey}`)
+        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractAddress = contractInfo.contractAddress;
+        const abi = contractInfo.contractABI;
+        console.log(contractInfo);
 
-        console.log(`Invoking method: ${contractName}.${methodName}(${values})`);
-        console.log(`Contract address: ${contractAddress})`);
-        console.log(`Contract account: ${account})`);
+        console.log(`Invoking method: ${contractName}.${methodName}( ${values} )`);
+        console.log(`Contract address: ${contractAddress}`);
+        console.log(`Contract account: ${account}`);
+        console.log(`Contract ABI: ${abi}`);
 
-
-        const abi = this.getAbi(contractName);
         const contract = new this.web3.eth.Contract(abi, contractAddress);
         const tx = contract.methods[methodName](...values);
         const estimatedGas = await tx.estimateGas({ from: account });
         const gasPrice = await this.web3.eth.getGasPrice();
-        
+
         const txData = {
-          from: account,
-          to: contractAddress,
-          gas: estimatedGas,
-          gasPrice: gasPrice,
-          data: tx.encodeABI(), 
+            from: account,
+            to: contractAddress,
+            gas: estimatedGas,
+            gasPrice: gasPrice,
+            data: tx.encodeABI(),
         };
 
         console.log(`TxData: ${txData}`);
 
-        try{
-            
+        try {
+
             const signedTx = await this.web3.eth.accounts.signTransaction(txData, privateKey);
             console.log(`Signed TX: ${signedTx}`);
 
             let receipt = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-    
-            receipt = JSON.parse(JSON.stringify(receipt, (key, value) => 
+
+            receipt = JSON.parse(JSON.stringify(receipt, (key, value) =>
                 typeof value === 'bigint' ? value.toString() : value
-              ));
-              
+            ));
+
             const gasUsed = receipt['gasUsed'];
-            
-            const expenseInfo = this.expenseService.getExpenseInformation(contractName , methodName , gasUsed , gasPrice);
-            
+
+            const expenseInfo = this.expenseService.getExpenseInformation(contractName, methodName, gasUsed, gasPrice);
+
             this.expenseService.addExpenseInformation(expenseInfo);
 
             let result = {
@@ -169,8 +154,8 @@ class BlockchainService {
                 methodName: methodName,
                 txReceipt: receipt,
                 txExpense: expenseInfo
-            } 
-              
+            }
+
             console.log(`Transacción enviada con éxito:`, result);
             return result;
 
@@ -182,49 +167,54 @@ class BlockchainService {
 
 
 
+    async getAbi(contractName) {
+        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        return contractInfo.contractABI;
+    }
 
 
-
-    registerContract(contractName , contractAddress){
+    registerContract(contractName, contractAddress) {
         console.log(`Adding ${contractName}: ${contractAddress} to the Registry`);
-        this.contracts.set(contractName , contractAddress);
+        this.contracts.set(contractName, contractAddress);
         console.log('Current Registry:', Array.from(this.contracts.entries()));
     }
 
-    getRegisteredContracts(){
-        console.log('Retrieving Registry:', Array.from(this.contracts.entries()));
-        return Array.from(this.contracts.entries());
+    async getRegisteredContracts() {
+        console.log('Retrieving Registry');
+
+        return await Repository.getAllEntities();
     }
 
-    async getContractAddress(contractName){
-
-        let contractInfo = await Repository.getEntity('contracts' , {contractName: contractName });
-
+    async getContractAddress(contractName) {
+        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
         return contractInfo.contractAddress;
     }
 
 
-    async getAllEvents(contractName , contractAddress , eventName){
+    async getAllEvents(contractName, eventName) {
 
-        const contractABI = this.getAbi(contractName);
+        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractABI = contractInfo.contractABI;
+        const contractAddress = contractInfo.contractAddress;
+        const contractDeploymentBlockNumber = contractAddress.contractBlockNumber;
         const myContract = new this.web3.eth.Contract(contractABI, contractAddress);
 
         const events = await myContract.getPastEvents(eventName, {
-            fromBlock: 0, 
-            toBlock: 'latest', 
+            fromBlock: contractDeploymentBlockNumber,
+            toBlock: 'latest',
         });
 
-        const sanitizedEvents = JSON.parse(JSON.stringify(events, (key, value) => 
+        const sanitizedEvents = JSON.parse(JSON.stringify(events, (key, value) =>
             typeof value === 'bigint' ? value.toString() : value
-          ));
+        ));
         return sanitizedEvents;
     }
 
 
-    getExpenses(){
+    getExpenses() {
         return this.expenseService.getExpenses();
     }
-    
+
 }
 
 

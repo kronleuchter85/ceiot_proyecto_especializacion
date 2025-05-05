@@ -2,13 +2,20 @@ const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, PutCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
 const fs = require('fs');
-const {Utils} = require('./utils');
+const { Utils } = require('./utils');
 
 const client = new DynamoDBClient({ region: 'eu-west-2' });
 const docClient = DynamoDBDocumentClient.from(client, {
-    removeUndefinedValues: true, // 👈 Esta línea es crucial
+    removeUndefinedValues: true,
 });
 
+
+async function getAllEntities(entityName) {
+
+    const command = new ScanCommand({ TableName: entityName });
+    const response = await docClient.send(command);
+    return response.Items;
+}
 
 async function getEntity(entityName, entityFilter) {
 
@@ -51,5 +58,5 @@ async function saveEntity(entityName, entity) {
 
 
 module.exports = {
-    Repository: { saveEntity, getEntity }
+    Repository: { saveEntity, getEntity, getAllEntities }
 };

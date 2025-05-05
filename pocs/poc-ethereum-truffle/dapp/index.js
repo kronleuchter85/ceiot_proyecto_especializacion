@@ -84,9 +84,9 @@ app.get('/api/contracts/:contractName/abi', async (req, res) => {
 
   try {
     // Verifica si existe el archivo ABI correspondiente al contrato
-    const abiPath = blockchainService.getAbi(contractName);
+    const abi = await blockchainService.getAbi(contractName);
 
-    res.json({ abiPath });
+    res.json({ abi });
   } catch (error) {
     console.error("Contract ABI not found:", error);
     res.status(500).json({ error: "Contract ABI not found", details: error.message });
@@ -102,7 +102,7 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 
   try {
     // Verifica si existe el archivo ABI correspondiente al contrato
-    const result = await blockchainService.call(contractName , contractAddress , method);
+    const result = await blockchainService.call(contractName  , method);
 
     res.json({ result });
   } catch (error) {
@@ -119,17 +119,13 @@ app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const { value } = req.body;
   const privateKey = wallet_private_key;
   const account = await blockchainService.getFirstAccount();
-  const contractAddress = blockchainService.getContractAddress(contractName);
 
-  // console.log(`Account: ${account}`);
-  // console.log(`PK: ${privateKey}`);
-  // console.log(`Value: ${value}`);
   if (!value || !account || !privateKey) {
     return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account, PK, o valor" });
   }
 
   try {
-    const result = await blockchainService.send(contractName , contractAddress , method , value, account, privateKey);
+    const result = await blockchainService.send(contractName  , method , value, account, privateKey);
 
     res.status(200).json({
       message: "Transaccion realizada con exito",
@@ -174,7 +170,7 @@ app.get('/api/contracts/:contractName/events/:eventName', async (req, res) => {
   const contractAddress = blockchainService.getContractAddress(contractName);
 
   try {
-    const result = await blockchainService.getAllEvents(contractName,contractAddress , eventName);
+    const result = await blockchainService.getAllEvents(contractName , eventName);
     res.json({ result });
   } catch (error) {
     console.error("Problem registering contract:", error);
