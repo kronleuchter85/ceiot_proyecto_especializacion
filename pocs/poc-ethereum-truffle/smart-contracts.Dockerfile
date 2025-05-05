@@ -10,7 +10,7 @@ RUN truffle init
 RUN truffle compile 
 
 COPY ./smart-contracts/ /app
-COPY ./js/repository.js /app/migrations
+COPY ./js/repository.js ./js/utils.js /app/migrations
 
 
 CMD ["/bin/bash"]

@@ -1,6 +1,7 @@
 // const axios = require('axios');
 
 
+const {Repository} = require('./repository');
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
@@ -99,8 +100,15 @@ class BlockchainService {
         }
     }
 
-    getAbi(contractName){
-        return JSON.parse(fs.readFileSync(path.join(ABI_DIR, contractName + '.json'), 'utf8')).abi;
+    async getAbi(contractName){
+
+        let contractInfo = await Repository.getEntity('contracts' , {contractName: contractName });
+
+        return contractInfo.contractABI;
+
+
+
+        // return JSON.parse(fs.readFileSync(path.join(ABI_DIR, contractName + '.json'), 'utf8')).abi;
     }
 
     async call(contractName, contractAddress, methodName){
@@ -188,8 +196,11 @@ class BlockchainService {
         return Array.from(this.contracts.entries());
     }
 
-    getContractAddress(contractName){
-        return this.contracts.get(contractName);
+    async getContractAddress(contractName){
+
+        let contractInfo = await Repository.getEntity('contracts' , {contractName: contractName });
+
+        return contractInfo.contractAddress;
     }
 
 

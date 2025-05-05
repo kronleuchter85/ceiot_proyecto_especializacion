@@ -1,17 +1,19 @@
-const axios = require('axios');
+// const axios = require('axios');
 
-const pretty = require('json-stringify-safe');
-const { getContractNames } = require('./deploy_utils');
-const { saveContract, getEntity, saveEntity } = require('./repository');
+// const pretty = require('json-stringify-safe');
+// const { getContractNames } = require('./deploy_utils');
+const { Repository } = require('./repository');
+const {Utils} = require('./utils');
 
-const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
+
+// const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
 
 module.exports = async function (deployer, network) {
 
     try {
 
 
-        let contractNames = getContractNames('../contracts');
+        let contractNames = Utils.getContractNames('../contracts');
 
         for (const contractName of contractNames) {
 
@@ -32,29 +34,27 @@ module.exports = async function (deployer, network) {
                     contractBlockNumber: receipt.blockNumber
                 }
 
-                console.log(`Detalles del Depliegue de`);
-                console.log(contractInfo);
-      
+                // console.log(`Detalles del Depliegue de`);
+                // console.log(contractInfo);
 
                 // console.log(`Detalles del Depliegue de ${contractName}: ${contractInstance2}`);
                 // console.log(`Depliegue de contrato ${contractName} en ${contractInstance.address}`);
 
                 console.log(`Registro de Storage en la Registry`);
 
-                await axios.post(CONTRACTS_REGISTRY_URL, {
-                    contractName: contractName,
-                    contractAddress: contractInstance.address
-                });
+                // await axios.post(CONTRACTS_REGISTRY_URL, {
+                //     contractName: contractName,
+                //     contractAddress: contractInstance.address
+                // });
 
 
-                console.log('Almacenando en Dynamo');
+                // console.log('Almacenando en Dynamo');
 
+                await Repository.saveEntity('contracts' ,contractInfo);
 
-                await saveEntity('contracts' ,contractInfo);
+                // let info2 = await getEntity('contracts' , {contractName: contractInfo.contractName });
 
-                let info2 = await getEntity('contracts' , {contractName: contractInfo.contractName });
-
-                console.log(info2);
+                // console.log(info2);
 
             } catch (error) {
                 console.error(`Error desplegando el contrato ${contractName}:`, error);
