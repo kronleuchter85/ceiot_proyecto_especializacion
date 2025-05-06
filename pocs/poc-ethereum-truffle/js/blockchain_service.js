@@ -1,15 +1,10 @@
 // const axios = require('axios');
 
 const { Repository } = require('./repository');
+const { ContractService } = require('./contract_service');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const { Web3 } = require("web3");
 const ExpenseService = require('./expenses_service');
-
-// const fs = require('fs');
-// const path = require('path');
-// const ABI_DIR = '/app/abi';
-
-
 
 
 class BlockchainService {
@@ -91,7 +86,7 @@ class BlockchainService {
     }
 
     async call(contractName, methodName) {
-        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractInfo = await ContractService.getContractDetails(contractName);
         const contractAddress = contractInfo.contractAddress;
         const abi = contractInfo.contractABI;
 
@@ -106,15 +101,14 @@ class BlockchainService {
 
     async send(contractName, methodName, values, account, privateKey) {
 
-        console.log(`${contractName}, ${methodName}, ${values}, ${account}, ${privateKey}`)
-        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractInfo = await ContractService.getContractDetails(contractName);
         const contractAddress = contractInfo.contractAddress;
         const abi = contractInfo.contractABI;
-        console.log(contractInfo);
+        
 
         console.log(`Invoking method: ${contractName}.${methodName}( ${values} )`);
         console.log(`Contract address: ${contractAddress}`);
-        console.log(`Contract account: ${account}`);
+        // console.log(`Contract account: ${account}`);
         console.log(`Contract ABI: ${abi}`);
 
         const contract = new this.web3.eth.Contract(abi, contractAddress);
@@ -144,7 +138,6 @@ class BlockchainService {
             ));
 
             const gasUsed = receipt['gasUsed'];
-
             const expenseInfo = this.expenseService.getExpenseInformation(contractName, methodName, gasUsed, gasPrice);
 
             this.expenseService.addExpenseInformation(expenseInfo);
@@ -165,32 +158,6 @@ class BlockchainService {
         }
     }
 
-
-
-    async getAbi(contractName) {
-        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
-        return contractInfo.contractABI;
-    }
-
-
-    registerContract(contractName, contractAddress) {
-        console.log(`Adding ${contractName}: ${contractAddress} to the Registry`);
-        this.contracts.set(contractName, contractAddress);
-        console.log('Current Registry:', Array.from(this.contracts.entries()));
-    }
-
-    async getRegisteredContracts() {
-        console.log('Retrieving Registry');
-
-        return await Repository.getAllEntities();
-    }
-
-    async getContractAddress(contractName) {
-        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
-        return contractInfo.contractAddress;
-    }
-
-
     async getAllEvents(contractName, eventName) {
 
         const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
@@ -210,10 +177,6 @@ class BlockchainService {
         return sanitizedEvents;
     }
 
-
-    getExpenses() {
-        return this.expenseService.getExpenses();
-    }
 
 }
 

@@ -2,8 +2,6 @@
    
 services:
 
-
-      
   ganache:
       image: trufflesuite/ganache:latest
       container_name: ganache
@@ -17,8 +15,7 @@ services:
         - --wallet.mnemonic="candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
     
 
-
-  smart-contracts-deployer:
+  truffle-deployer:
     build:
       context: .
       dockerfile: smart-contracts.Dockerfile

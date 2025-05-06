@@ -1,5 +1,5 @@
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, PutCommand, GetCommand , ScanCommand } = require('@aws-sdk/lib-dynamodb');
 
 const fs = require('fs');
 const { Utils } = require('./utils');

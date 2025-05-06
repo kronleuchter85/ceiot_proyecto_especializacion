@@ -1,264 +1,246 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Blockchain API",
-      "version": "1.0.0",
-      "description": "Documentación automática de la API de la DApp Ethereum"
-    },
-    "paths": {
-      "/api/greetings": {
-        "get": {
-          "summary": "Saludo",
-          "responses": {
-            "200": {
-              "description": "Devuelve un saludo simple",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "message": ["hola", "como", "estas?"]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/accounts": {
-        "get": {
-          "summary": "Lista de cuentas",
-          "responses": {
-            "200": {
-              "description": "Devuelve las cuentas disponibles",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "accounts": ["0x123...", "0x456..."]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/blocks/{n}": {
-        "get": {
-          "summary": "Últimos N bloques",
-          "parameters": [
-            {
-              "name": "n",
-              "in": "path",
-              "required": true,
-              "schema": { "type": "integer", "minimum": 1 },
-              "description": "Cantidad de bloques a recuperar"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Devuelve los últimos N bloques",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "blocks": ["block1", "block2"]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/blocks/{n}/transactions": {
-        "get": {
-          "summary": "Transacciones de un bloque",
-          "parameters": [
-            {
-              "name": "n",
-              "in": "path",
-              "required": true,
-              "schema": { "type": "integer", "minimum": 1 },
-              "description": "Número de bloque"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Devuelve las transacciones del bloque",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "txs": ["tx1", "tx2"]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/contracts/{contractName}/abi": {
-        "get": {
-          "summary": "Obtiene ABI del contrato",
-          "parameters": [
-            {
-              "name": "contractName",
-              "in": "path",
-              "required": true,
-              "schema": { "type": "string" }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Devuelve la ruta del archivo ABI",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "abiPath": "./contracts/MyContract.abi.json"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/contracts/{contractName}/xView/{method}": {
-        "get": {
-          "summary": "Invoca método de lectura del contrato",
-          "parameters": [
-            { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-            { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
-          ],
-          "responses": {
-            "200": {
-              "description": "Resultado de la invocación de lectura",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "result": "valorRetornado"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/contracts/{contractName}/xWrite/{method}": {
-        "post": {
-          "summary": "Invoca método de escritura del contrato",
-          "parameters": [
-            { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-            { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
-          ],
-          "requestBody": {
-            "required": true,
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Blockchain API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/accounts": {
+      "get": {
+        "summary": "Obtener todas las cuentas",
+        "responses": {
+          "200": {
+            "description": "Lista de cuentas",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "value": { "type": "string" }
-                    
-                  },
-                  "required": ["value"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Resultado de la transacción",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "message": "Parámetros recibidos correctamente",
-                    "receipt": { "transactionHash": "0x..." }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/contracts/register": {
-        "post": {
-          "summary": "Registra un contrato",
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "contractName": { "type": "string" },
-                    "contractAddress": { "type": "string" }
-                  },
-                  "required": ["contractName", "contractAddress"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Contrato registrado",
-              "content": {
-                "application/json": {
-                  "example": { "message": "Contrato Registrado" }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/contracts/registry": {
-        "get": {
-          "summary": "Obtiene contratos registrados",
-          "responses": {
-            "200": {
-              "description": "Lista de contratos registrados",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "result": {
-                      "MyContract": "0x123..."
+                    "accounts": {
+                      "type": "array",
+                      "items": { "type": "string" }
                     }
                   }
                 }
               }
             }
-          }
+          },
+          "500": { "description": "Error del servidor" }
         }
-      },
-      "/api/contracts/{contractName}/events/{eventName}": {
-        "get": {
-          "summary": "Obtiene eventos del contrato",
-          "parameters": [
-            { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-            { "name": "eventName", "in": "path", "required": true, "schema": { "type": "string" } }
-          ],
-          "responses": {
-            "200": {
-              "description": "Eventos encontrados",
-              "content": {
-                "application/json": {
-                  "example": { "result": ["event1", "event2"] }
-                }
-              }
-            }
+      }
+    },
+    "/api/blocks/{n}": {
+      "get": {
+        "summary": "Obtener los últimos N bloques",
+        "parameters": [
+          {
+            "name": "n",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "minimum": 1 }
           }
-        }
-      },
-      "/api/expenses": {
-        "get": {
-          "summary": "Obtiene lista de gastos",
-          "responses": {
-            "200": {
-              "description": "Devuelve gastos registrados",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "result": ["expense1", "expense2"]
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de bloques",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "blocks": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
                   }
                 }
               }
             }
+          },
+          "400": { "description": "Parámetro inválido" },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/blocks/{n}/transactions": {
+      "get": {
+        "summary": "Obtener transacciones de un bloque",
+        "parameters": [
+          {
+            "name": "n",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "minimum": 1 }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transacciones del bloque",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "txs": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Parámetro inválido" },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/contracts/{contractName}/details": {
+      "get": {
+        "summary": "Obtener detalles del contrato",
+        "parameters": [
+          {
+            "name": "contractName",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Información del contrato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contractInfo": { "type": "object" }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/contracts/{contractName}/xView/{method}": {
+      "get": {
+        "summary": "Invocar método de lectura del contrato",
+        "parameters": [
+          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado de la lectura",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {}
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/contracts/{contractName}/xWrite/{method}": {
+      "post": {
+        "summary": "Invocar método de escritura del contrato",
+        "parameters": [
+          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {}
+                },
+                "required": ["value"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transacción exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "result": {}
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Parámetros faltantes" },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/contracts": {
+      "get": {
+        "summary": "Obtener contratos registrados",
+        "responses": {
+          "200": {
+            "description": "Lista de contratos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error del servidor" }
+        }
+      }
+    },
+    "/api/contracts/{contractName}/events/{eventName}": {
+      "get": {
+        "summary": "Obtener eventos de un contrato",
+        "parameters": [
+          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "eventName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Eventos obtenidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Error del servidor" }
         }
       }
     }
   }
+}

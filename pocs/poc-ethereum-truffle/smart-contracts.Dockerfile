@@ -9,7 +9,8 @@ RUN npm install -g truffle
 RUN truffle init
 RUN truffle compile 
 
-COPY ./smart-contracts/ /app
+COPY ./contracts/ /app/contracts/
+COPY ./truffle/ /app
 COPY ./js/repository.js ./js/utils.js /app/migrations
 
 

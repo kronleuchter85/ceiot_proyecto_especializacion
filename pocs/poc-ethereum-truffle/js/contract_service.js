@@ -1,8 +1,6 @@
 
 
-
-
-const {Repository} = require('./repository');
+const { Repository } = require('./repository');
 
 
 // function registerContract(contractName , contractAddress){
@@ -11,14 +9,18 @@ const {Repository} = require('./repository');
 //     console.log('Current Registry:', Array.from(this.contracts.entries()));
 // }
 
-// function getRegisteredContracts(){
-//     console.log('Retrieving Registry:', Array.from(this.contracts.entries()));
-//     return Array.from(this.contracts.entries());
-// }
-
-async function getContractDetails(contractName){
-
-    let contractInfo = await Repository.getEntity('contracts' , {contractName: contractName });
-
+async function getContractDetails(contractName) {
+    const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
     return contractInfo;
 }
+
+
+
+async function getRegisteredContracts() {
+    return await Repository.getAllEntities('contracts');
+}
+
+
+module.exports = {
+    ContractService: { getRegisteredContracts, getContractDetails }
+};
