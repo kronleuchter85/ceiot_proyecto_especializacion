@@ -163,7 +163,7 @@ class BlockchainService {
         const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
         const contractABI = contractInfo.contractABI;
         const contractAddress = contractInfo.contractAddress;
-        const contractDeploymentBlockNumber = contractAddress.contractBlockNumber;
+        const contractDeploymentBlockNumber = contractInfo.contractBlockNumber;
         const myContract = new this.web3.eth.Contract(contractABI, contractAddress);
 
         const events = await myContract.getPastEvents(eventName, {
