@@ -18,9 +18,9 @@ services:
   truffle-deployer:
     build:
       context: .
-      dockerfile: smart-contracts.Dockerfile
-    image: poc-ethereum-smart-contracts-deployer
-    container_name: poc-ethereum-smart-contracts-deployer
+      dockerfile: Dockerfile.truffle-deployer
+    image: truffle-deployer
+    container_name: truffle-deployer
     depends_on:
       - ganache
     volumes:
@@ -37,9 +37,9 @@ services:
   dapp:
     build:
       context: .
-      dockerfile: dapp.Dockerfile
-    image: poc-ethereum-dapp
-    container_name: poc-ethereum-dapp
+      dockerfile: Dockerfile.dapp
+    image: dapp
+    container_name: dapp
     depends_on:
       - ganache
     volumes:

@@ -2,37 +2,33 @@
    
 services:
 
-
-      
-  smart-contracts-deployer:
+  truffle-deployer:
     build:
-      context: ./smart-contracts
-      dockerfile: Dockerfile
-    image: poc-ethereum-smart-contracts-deployer
-    container_name: poc-ethereum-smart-contracts-deployer
+      context: .
+      dockerfile: Dockerfile.truffle-deployer
+    image: truffle-deployer
+    container_name: truffle-deployer
     volumes:
-      - ./abi:/app/build/contracts
+      - ~/.aws:/root/.aws
     env_file:
       - ./_sepolia.env
+    environment:
+      - AWS_PROFILE=dev 
     command: truffle migrate --network sepolia & 
     stdin_open: true
     tty: true
   
-
-
-
-
-
   dapp:
     build:
       context: ./dapp
-      dockerfile: Dockerfile
-    image: poc-ethereum-dapp
-    container_name: poc-ethereum-dapp
+      dockerfile: Dockerfile.dapp
+    image: dapp
+    container_name: dapp
     volumes:
-      - ./dapp/index.js:/app/index.js
-      - ./abi:/app/abi
+      - ~/.aws:/root/.aws
     env_file:
       - ./_sepolia.env
+    environment:
+      - AWS_PROFILE=dev 
     ports:
         - "3000:3000"
