@@ -101,76 +101,84 @@ class BlockchainService {
 
     async send(contractName, methodName, values, account, privateKey) {
 
+        const nonce = await this.web3.eth.getTransactionCount(account, 'pending');
         const contractInfo = await ContractService.getContractDetails(contractName);
         const contractAddress = contractInfo.contractAddress;
         const abi = contractInfo.contractABI;
-        
 
+        console.log('-----------------------------------------------------------------------------------------');
+        console.log(`Network Nonce: ${nonce}`);
         console.log(`Invoking method: ${contractName}.${methodName}( ${values} )`);
         console.log(`Contract address: ${contractAddress}`);
         // console.log(`Contract account: ${account}`);
-        console.log(`Contract ABI: ${abi}`);
+        console.log(`Contract ABI:`,abi);
 
         const contract = new this.web3.eth.Contract(abi, contractAddress);
         const tx = contract.methods[methodName](...values);
         const estimatedGas = await tx.estimateGas({ from: account });
         const gasPrice = await this.web3.eth.getGasPrice();
-
+        
         const txData = {
             from: account,
             to: contractAddress,
             gas: estimatedGas,
             gasPrice: gasPrice,
             data: tx.encodeABI(),
+            nonce: nonce
         };
-
-        console.log(`TxData: ${txData}`);
-
+        
+        console.log(`TxData:`,txData);
+        
         try {
-
+            
             const signedTx = await this.web3.eth.accounts.signTransaction(txData, privateKey);
-            console.log(`Signed TX: ${signedTx}`);
-
+            console.log(`Signed TX:`,signedTx);
+            
             let receipt = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
+            
             receipt = JSON.parse(JSON.stringify(receipt, (key, value) =>
                 typeof value === 'bigint' ? value.toString() : value
-            ));
-
-            const gasUsed = receipt['gasUsed'];
-            const expenseInfo = this.expenseService.getExpenseInformation(contractName, methodName, gasUsed, gasPrice);
-
-            this.expenseService.addExpenseInformation(expenseInfo);
-
-            let result = {
-                contractName: contractName,
-                methodName: methodName,
-                txReceipt: receipt,
-                txExpense: expenseInfo
-            }
-
-            console.log(`Transacción enviada con éxito:`, result);
-            return result;
-
-        } catch (error) {
-            console.error(`Error al invocar el método de escritura:`, error);
+        ));
+        
+        console.log(`Receipt:`, receipt);
+        
+        const gasUsed = receipt['gasUsed'];
+        const expenseInfo = this.expenseService.getExpenseInformation(contractName, methodName, gasUsed, gasPrice);
+        
+        this.expenseService.addExpenseInformation(expenseInfo);
+        
+        let result = {
+            contractName: contractName,
+            methodName: methodName,
+            txReceipt: receipt,
+            txExpense: expenseInfo
+        }
+        
+        console.log(`Transacción finalizada con éxito:`, result);
+        console.log('-----------------------------------------------------------------------------------------');
+        return result;
+        
+    } catch (error) {
+        console.error(`Error al invocar el método de escritura:`, error);
             throw error;
         }
     }
-
+    
+    
+    
     async getAllEvents(contractName, eventName) {
-
+        
         const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
         const contractABI = contractInfo.contractABI;
         const contractAddress = contractInfo.contractAddress;
         const contractDeploymentBlockNumber = contractInfo.contractBlockNumber;
         const myContract = new this.web3.eth.Contract(contractABI, contractAddress);
-
+        
         const events = await myContract.getPastEvents(eventName, {
             fromBlock: contractDeploymentBlockNumber,
             toBlock: 'latest',
         });
-
+        
         const sanitizedEvents = JSON.parse(JSON.stringify(events, (key, value) =>
             typeof value === 'bigint' ? value.toString() : value
         ));

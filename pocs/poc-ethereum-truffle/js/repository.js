@@ -27,10 +27,10 @@ async function getEntity(entityName, entityFilter) {
     try {
         const result = await docClient.send(new GetCommand(params3));
         if (result.Item) {
-            console.log('✅ Objeto obtenido:', result.Item);
+            // console.log('✅ Objeto obtenido:', result.Item);
             return result.Item;
         } else {
-            console.log('⚠️ Objeto no encontrado');
+            // console.log('⚠️ Objeto no encontrado');
             return null;
         }
     } catch (err) {
