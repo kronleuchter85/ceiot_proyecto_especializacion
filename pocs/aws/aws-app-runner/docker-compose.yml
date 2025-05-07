@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: poc-aws-app-runner
+    image: aws-app-runner
     container_name: poc-aws-app-runner
     volumes:
       - ./index.js:/app/index.js
