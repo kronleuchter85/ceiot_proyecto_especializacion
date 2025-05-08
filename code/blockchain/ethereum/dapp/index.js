@@ -5,10 +5,8 @@ const app = express();
 const port = 3000;
 
 const BlockchainService = require('./blockchain_service');
-const blockchainService = new BlockchainService(process.env.BLOCKCHAIN_URL);
+const blockchainService = new BlockchainService();
 const { ContractService } = require('./contract_service');
-
-const wallet_private_key = process.env.WALLET_PRIVATE_KEY;
 
 // 
 // open api generator 
@@ -115,15 +113,14 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const { contractName, method } = req.params;
   const { value } = req.body;
-  const privateKey = wallet_private_key;
   const account = await blockchainService.getFirstAccount();
 
-  if (!value || !account || !privateKey) {
-    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account, PK, o valor" });
+  if (!value || !account ) {
+    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account o valor" });
   }
 
   try {
-    const result = await blockchainService.send(contractName, method, value, account, privateKey);
+    const result = await blockchainService.send(contractName, method, value, account);
 
     res.status(200).json({
       message: "Transaccion realizada con exito",

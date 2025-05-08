@@ -7,6 +7,6 @@ WORKDIR /app
 RUN npm install express body-parser
 # RUN npm install -g truffle
 
-COPY indes.js .
+COPY index.js .
 
 CMD ["node", "index.js"]
