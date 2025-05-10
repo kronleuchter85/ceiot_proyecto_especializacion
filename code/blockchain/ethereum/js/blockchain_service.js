@@ -14,7 +14,7 @@ class BlockchainService {
 
     constructor() {
 
-        console.log(`Mnemonic: ${MNEMONIC}`);
+        // console.log(`Mnemonic: ${MNEMONIC}`);
         console.log(`Provider URL: ${BLOCKCHAIN_URL}`);
 
         // if (process.env.MNEMONIC == undefined) {
