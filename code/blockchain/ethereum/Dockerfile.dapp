@@ -4,10 +4,10 @@ WORKDIR /app
 
 
 # RUN npm install js-yaml
-RUN npm install web3 dotenv express body-parser axios @truffle/hdwallet-provider swagger-ui-express @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb 
+RUN npm install web3 dotenv express body-parser axios @truffle/hdwallet-provider swagger-ui-express @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb @aws-sdk/client-s3 date-fns
 RUN npm install -g truffle
 
-COPY ./js/repository.js ./js/utils.js ./js/contract_service.js ./js/blockchain_service.js ./js/expenses_service.js /app
+COPY ./js/dynamo-repository.js ./js/utils.js ./js/contract_service.js ./js/blockchain_service.js ./js/expenses_service.js /app
 COPY ./truffle/truffle-config.js /app/truffle-config.js
 COPY ./dapp/ /app
 

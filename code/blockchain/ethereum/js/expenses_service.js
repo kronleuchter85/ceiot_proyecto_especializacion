@@ -43,7 +43,7 @@ class ExpenseService {
             'operation':`${contractName}.${methodName}`,
             'gasUsed': gasUsed,
             'costEth': gasCostInETHFormatted,
-            'eth/usd': this.ethUsdRate,
+            'eth_usd': this.ethUsdRate,
             'costUSD': gasCostInUSD
         };
         return expenseInfo;

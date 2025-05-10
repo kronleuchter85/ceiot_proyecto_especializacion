@@ -1,6 +1,6 @@
 
 
-const { Repository } = require('./repository');
+const { DynamoRepository } = require('./dynamo-repository');
 
 
 // function registerContract(contractName , contractAddress){
@@ -10,14 +10,14 @@ const { Repository } = require('./repository');
 // }
 
 async function getContractDetails(contractName) {
-    const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+    const contractInfo = await DynamoRepository.getEntity('contracts', { contractName: contractName });
     return contractInfo;
 }
 
 
 
 async function getRegisteredContracts() {
-    return await Repository.getAllEntities('contracts');
+    return await DynamoRepository.getAllEntities('contracts');
 }
 
 

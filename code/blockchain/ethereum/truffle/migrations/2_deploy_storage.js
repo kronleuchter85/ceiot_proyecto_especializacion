@@ -2,16 +2,16 @@
 
 // const pretty = require('json-stringify-safe');
 // const { getContractNames } = require('./deploy_utils');
-const { Repository } = require('./repository');
+const { DynamoRepository } = require('./dynamo-repository');
+const { S3Repository } = require('./s3-repository');
 const {Utils} = require('./utils');
-
+const { format } = require("date-fns");
 
 // const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
 
 module.exports = async function (deployer, network) {
 
     try {
-
 
         let contractNames = Utils.getContractNames('../contracts');
 
@@ -31,30 +31,16 @@ module.exports = async function (deployer, network) {
                     contractAddress: Contract.address,
                     contractABI: contractInstance.abi ,
                     contractTransactionHash: Contract.transactionHash,
-                    contractBlockNumber: receipt.blockNumber
+                    contractBlockNumber: receipt.blockNumber,
+                    network: network,
+                    timestamp: format(new Date(), "yyyyMMdd-HHmmss")
                 }
-
-                // console.log(`Detalles del Depliegue de`);
-                // console.log(contractInfo);
-
-                // console.log(`Detalles del Depliegue de ${contractName}: ${contractInstance2}`);
-                // console.log(`Depliegue de contrato ${contractName} en ${contractInstance.address}`);
 
                 console.log(`Registro de Storage en la Registry`);
 
-                // await axios.post(CONTRACTS_REGISTRY_URL, {
-                //     contractName: contractName,
-                //     contractAddress: contractInstance.address
-                // });
+                await DynamoRepository.saveEntity('contracts' ,contractInfo);
+                await S3Repository.addObject('ceiot-exploratory-robot' , 'contracts' , contractInfo);
 
-
-                // console.log('Almacenando en Dynamo');
-
-                await Repository.saveEntity('contracts' ,contractInfo);
-
-                // let info2 = await getEntity('contracts' , {contractName: contractInfo.contractName });
-
-                // console.log(info2);
 
             } catch (error) {
                 console.error(`Error desplegando el contrato ${contractName}:`, error);

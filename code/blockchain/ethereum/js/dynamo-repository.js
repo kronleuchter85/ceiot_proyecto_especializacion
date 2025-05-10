@@ -58,5 +58,5 @@ async function saveEntity(entityName, entity) {
 
 
 module.exports = {
-    Repository: { saveEntity, getEntity, getAllEntities }
+    DynamoRepository: { saveEntity, getEntity, getAllEntities }
 };

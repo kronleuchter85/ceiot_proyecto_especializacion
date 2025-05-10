@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /app
 
-RUN npm install axios dotenv @truffle/hdwallet-provider  json-stringify-safe @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
+RUN npm install axios dotenv @truffle/hdwallet-provider  json-stringify-safe @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb @aws-sdk/client-s3 date-fns
 # RUN npm install
 RUN npm install -g truffle
 
@@ -11,7 +11,7 @@ RUN truffle compile
 
 COPY ./contracts/ /app/contracts/
 COPY ./truffle/ /app
-COPY ./js/repository.js ./js/utils.js /app/migrations
+COPY ./js/dynamo-repository.js ./js/s3-repository.js ./js/utils.js /app/migrations
 
 
 CMD ["/bin/bash"]

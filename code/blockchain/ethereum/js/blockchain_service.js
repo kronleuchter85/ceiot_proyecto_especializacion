@@ -1,6 +1,6 @@
 // const axios = require('axios');
 
-const { Repository } = require('./repository');
+const { DynamoRepository } = require('./dynamo-repository');
 const { ContractService } = require('./contract_service');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const { Web3 } = require("web3");
@@ -175,7 +175,7 @@ class BlockchainService {
 
     async getAllEvents(contractName, eventName) {
 
-        const contractInfo = await Repository.getEntity('contracts', { contractName: contractName });
+        const contractInfo = await DynamoRepository.getEntity('contracts', { contractName: contractName });
         const contractABI = contractInfo.contractABI;
         const contractAddress = contractInfo.contractAddress;
         const contractDeploymentBlockNumber = contractInfo.contractBlockNumber;
