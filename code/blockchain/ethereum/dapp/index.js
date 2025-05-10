@@ -112,15 +112,15 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 //
 app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const { contractName, method } = req.params;
-  const { value } = req.body;
+  const payload = req.body;
   const account = await blockchainService.getFirstAccount();
 
-  if (!value || !account ) {
-    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account o valor" });
+  if (!payload || !account ) {
+    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account o payload" });
   }
 
   try {
-    const result = await blockchainService.send(contractName, method, value, account);
+    const result = await blockchainService.send(contractName, method, payload, account);
 
     res.status(200).json({
       message: "Transaccion realizada con exito",

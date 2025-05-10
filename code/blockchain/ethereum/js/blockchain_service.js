@@ -106,8 +106,11 @@ class BlockchainService {
         return sanitizedResult;
     }
 
-    async send(contractName, methodName, values, account) {
+    async send(contractName, methodName, data, account) {
 
+        const date = data.date;
+        const time = data.time;
+        const values = data.values;
         const nonce = await this.web3.eth.getTransactionCount(account, 'pending');
         const contractInfo = await ContractService.getContractDetails(contractName);
         const contractAddress = contractInfo.contractAddress;
@@ -158,7 +161,9 @@ class BlockchainService {
                 contractName: contractName,
                 methodName: methodName,
                 txReceipt: receipt,
-                txExpense: expenseInfo
+                txExpense: expenseInfo,
+                date: date,
+                time: time
             }
 
             console.log(`Transacción finalizada con éxito:`, result);

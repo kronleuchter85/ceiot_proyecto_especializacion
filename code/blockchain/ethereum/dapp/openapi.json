@@ -18,14 +18,18 @@
                   "properties": {
                     "accounts": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "500": { "description": "Error del servidor" }
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -37,7 +41,10 @@
             "name": "n",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "minimum": 1 }
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         ],
         "responses": {
@@ -50,15 +57,21 @@
                   "properties": {
                     "blocks": {
                       "type": "array",
-                      "items": { "type": "object" }
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetro inválido" },
-          "500": { "description": "Error del servidor" }
+          "400": {
+            "description": "Parámetro inválido"
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -70,7 +83,10 @@
             "name": "n",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "minimum": 1 }
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         ],
         "responses": {
@@ -83,15 +99,21 @@
                   "properties": {
                     "txs": {
                       "type": "array",
-                      "items": { "type": "object" }
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetro inválido" },
-          "500": { "description": "Error del servidor" }
+          "400": {
+            "description": "Parámetro inválido"
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -103,7 +125,9 @@
             "name": "contractName",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -114,13 +138,17 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "contractInfo": { "type": "object" }
+                    "contractInfo": {
+                      "type": "object"
+                    }
                   }
                 }
               }
             }
           },
-          "500": { "description": "Error del servidor" }
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -128,8 +156,22 @@
       "get": {
         "summary": "Invocar método de lectura del contrato",
         "parameters": [
-          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "contractName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -145,7 +187,9 @@
               }
             }
           },
-          "500": { "description": "Error del servidor" }
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -153,8 +197,22 @@
       "post": {
         "summary": "Invocar método de escritura del contrato",
         "parameters": [
-          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "method", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "contractName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -162,10 +220,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "value": {}
-                },
-                "required": ["value"]
+                "description": "Parámetros del método del contrato (dinámicos)",
+                "example": {
+                  "param1": "valor1",
+                  "param2": 123
+                }
               }
             }
           }
@@ -178,15 +237,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "result": {}
                   }
                 }
               }
             }
           },
-          "400": { "description": "Parámetros faltantes" },
-          "500": { "description": "Error del servidor" }
+          "400": {
+            "description": "Parámetros faltantes"
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -203,14 +268,18 @@
                   "properties": {
                     "result": {
                       "type": "array",
-                      "items": { "type": "object" }
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "500": { "description": "Error del servidor" }
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     },
@@ -218,8 +287,22 @@
       "get": {
         "summary": "Obtener eventos de un contrato",
         "parameters": [
-          { "name": "contractName", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "eventName", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "contractName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "eventName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -231,14 +314,18 @@
                   "properties": {
                     "result": {
                       "type": "array",
-                      "items": { "type": "object" }
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "500": { "description": "Error del servidor" }
+          "500": {
+            "description": "Error del servidor"
+          }
         }
       }
     }
