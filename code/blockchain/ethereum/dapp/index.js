@@ -4,9 +4,12 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 
-const BlockchainService = require('./blockchain_service');
+const BlockchainService = require('./blockchain-service');
 const blockchainService = new BlockchainService();
-const { ContractService } = require('./contract_service');
+const { ContractService } = require('./contract-service');
+
+
+const { S3Repository } = require('./s3-repository');
 
 // 
 // open api generator 
@@ -80,7 +83,7 @@ app.get("/api/blocks/:n/transactions", async (req, res) => {
 //
 app.get('/api/contracts/:contractName/details', async (req, res) => {
   const { contractName } = req.params;
-  
+
   try {
     const contractInfo = await ContractService.getContractDetails(contractName);
 
@@ -113,14 +116,13 @@ app.get('/api/contracts/:contractName/xView/:method', async (req, res) => {
 app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   const { contractName, method } = req.params;
   const payload = req.body;
-  const account = await blockchainService.getFirstAccount();
 
-  if (!payload || !account ) {
-    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar: Account o payload" });
+  if (!payload ) {
+    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar payload" });
   }
 
   try {
-    const result = await blockchainService.send(contractName, method, payload, account);
+    const result = await blockchainService.send(contractName, method, payload);
 
     res.status(200).json({
       message: "Transaccion realizada con exito",
@@ -133,20 +135,34 @@ app.post('/api/contracts/:contractName/xWrite/:method', async (req, res) => {
   }
 });
 
-// app.post('/api/contracts/register', async (req, res) => {
-//   const { contractName, contractAddress } = req.body;
+app.post('/api/contracts/:contractName/xWriteAsync/:method', async (req, res) => {
+  const { contractName, method } = req.params;
+  const payload = req.body;
 
-//   try {
-//     blockchainService.registerContract(contractName, contractAddress);
-//     res.status(200).json({
-//       message: "Contrato Registrado"
-//     });
-//   } catch (error) {
-//     console.error("Problem registering contract:", error);
-//     res.status(500).json({ error: "Problem registering contract", details: error.message });
-//   }
-// });
+  if (!payload ) {
+    return res.status(400).json({ error: "Uno o mas parametros no se pudieron determinar payload" });
+  }
 
+  res.status(200).json({
+    message: "Transaccion en processo"
+  });
+
+  //
+  // codigo asincrono para invocar a blockchain y subir el resultado al bucket
+  //
+  (async () => {
+
+    try {
+      const result = await blockchainService.send(contractName, method, payload);
+
+      await S3Repository.addObject('ceiot-exploratory-robot', 'transactions', result);
+
+    } catch (error) {
+      console.error("Error writing contract:", error);
+      res.status(500).json({ error: "Error writing contract", details: error.message });
+    }
+  })();
+});
 
 app.get('/api/contracts', async (req, res) => {
 

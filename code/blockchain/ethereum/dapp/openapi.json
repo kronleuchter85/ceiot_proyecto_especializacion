@@ -255,6 +255,68 @@
         }
       }
     },
+    "/api/contracts/{contractName}/xWriteAsync/{method}": {
+      "post": {
+        "summary": "Invocar método de escritura del contrato de manera asyncrononica",
+        "parameters": [
+          {
+            "name": "contractName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Parámetros del método del contrato (dinámicos)",
+                "example": {
+                  "param1": "valor1",
+                  "param2": 123
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transacción exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "result": {}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros faltantes"
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
+        }
+      }
+    },
     "/api/contracts": {
       "get": {
         "summary": "Obtener contratos registrados",

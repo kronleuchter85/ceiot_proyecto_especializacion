@@ -4,7 +4,7 @@
 // const { getContractNames } = require('./deploy_utils');
 const { DynamoRepository } = require('./dynamo-repository');
 const { S3Repository } = require('./s3-repository');
-const {Utils} = require('./utils');
+const { Utils } = require('./utils');
 const { format } = require("date-fns");
 
 // const CONTRACTS_REGISTRY_URL = 'http://poc-ethereum-dapp:3000/api/contracts/register';
@@ -18,6 +18,8 @@ module.exports = async function (deployer, network) {
         for (const contractName of contractNames) {
 
             try {
+                const nonce = await web3.eth.getTransactionCount(deployer.networks[deployer.network].from);
+                console.log(">> Nonce actual:", nonce);
                 const Contract = artifacts.require(contractName);
                 await deployer.deploy(Contract);
                 console.log(`Contrato ${contractName} desplegado con éxito`);
@@ -29,7 +31,7 @@ module.exports = async function (deployer, network) {
                 let contractInfo = {
                     contractName: contractName,
                     contractAddress: Contract.address,
-                    contractABI: contractInstance.abi ,
+                    contractABI: contractInstance.abi,
                     contractTransactionHash: Contract.transactionHash,
                     contractBlockNumber: receipt.blockNumber,
                     network: network,
@@ -38,8 +40,8 @@ module.exports = async function (deployer, network) {
 
                 console.log(`Registro de Storage en la Registry`);
 
-                await DynamoRepository.saveEntity('contracts' ,contractInfo);
-                await S3Repository.addObject('ceiot-exploratory-robot' , 'contracts' , contractInfo);
+                await DynamoRepository.saveEntity('contracts', contractInfo);
+                await S3Repository.addObject('ceiot-exploratory-robot', 'contracts', contractInfo);
 
 
             } catch (error) {

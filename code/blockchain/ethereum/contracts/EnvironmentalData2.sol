@@ -14,23 +14,23 @@ contract EnvironmentalData2 {
 
     // Evento para nueva lectura
     event NewReading(
+        string date,
+        string time,
         string deviceId,
-        string readingType,
-        string value,
         string geoLat,
         string geoLong,
-        string date,
-        string time
+        string readingType,
+        string value
     );
 
     function recordReading(
+        string memory _date,
+        string memory _time,
         string memory _deviceId,
-        string memory _readingType,
-        string memory _value,
         string memory _geoLat,
         string memory _geoLong,
-        string memory _date,
-        string memory _time
+        string memory _readingType,
+        string memory _value
     ) public {
         emit NewReading(_deviceId, _readingType, _value, _geoLat, _geoLong, _date, _time);
     }

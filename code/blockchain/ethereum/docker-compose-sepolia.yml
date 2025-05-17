@@ -2,6 +2,8 @@
    
 services:
 
+
+
   truffle-deployer:
     build:
       context: .
@@ -20,7 +22,7 @@ services:
   
   dapp:
     build:
-      context: ./dapp
+      context: .
       dockerfile: Dockerfile.dapp
     image: dapp
     container_name: dapp
@@ -32,3 +34,4 @@ services:
       - AWS_PROFILE=dev 
     ports:
         - "3000:3000"
+

@@ -1,11 +1,12 @@
 // const axios = require('axios');
 
 const { DynamoRepository } = require('./dynamo-repository');
-const { ContractService } = require('./contract_service');
+const { ContractService } = require('./contract-service');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const { Web3 } = require("web3");
-const ExpenseService = require('./expenses_service');
+const ExpenseService = require('./expenses-service');
 
+const WALLET_ACCOUNT = process.env.WALLET_ACCOUNT;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const MNEMONIC = process.env.MNEMONIC;
 const BLOCKCHAIN_URL = process.env.BLOCKCHAIN_URL;
@@ -43,9 +44,10 @@ class BlockchainService {
 
 
 
-    async getFirstAccount() {
-        const accounts = await this.getAllAccounts();
-        return accounts[0];
+    async getMainAccount() {
+        // const accounts = await this.getAllAccounts();
+        // return accounts[0];
+        return WALLET_ACCOUNT;
     }
 
     async getAllAccounts() {
@@ -106,11 +108,12 @@ class BlockchainService {
         return sanitizedResult;
     }
 
-    async send(contractName, methodName, data, account) {
+    async send(contractName, methodName, payload) {
 
-        const date = data.date;
-        const time = data.time;
-        const values = data.values;
+        const date = payload.date;
+        const time = payload.time;
+        const values = payload.values;
+        const account = await this.getMainAccount();
         const nonce = await this.web3.eth.getTransactionCount(account, 'pending');
         const contractInfo = await ContractService.getContractDetails(contractName);
         const contractAddress = contractInfo.contractAddress;
@@ -120,7 +123,7 @@ class BlockchainService {
         console.log(`Network Nonce: ${nonce}`);
         console.log(`Invoking method: ${contractName}.${methodName}( ${values} )`);
         console.log(`Contract address: ${contractAddress}`);
-        // console.log(`Contract account: ${account}`);
+        console.log(`Wallet account: ${account}`);
         console.log(`Contract ABI:`, abi);
 
         const contract = new this.web3.eth.Contract(abi, contractAddress);

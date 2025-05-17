@@ -45,7 +45,7 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 require('dotenv').config();
-const { MNEMONIC , BLOCKCHAIN_URL } = process.env;
+const { MNEMONIC , BLOCKCHAIN_URL , WALLET_ACCOUNT} = process.env;
 console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
 console.log(`MNEMONIC ${MNEMONIC}`);
 
@@ -84,6 +84,7 @@ module.exports = {
 
       pollingInterval: 1800000,
       disableConfirmationListener: true,
+      from: WALLET_ACCOUNT
     },
 
 
@@ -102,6 +103,7 @@ module.exports = {
 
       pollingInterval: 1800000,
       disableConfirmationListener: true,
+      from: WALLET_ACCOUNT
     },
   
     // Useful for testing. The `development` name is special - truffle uses it by default
