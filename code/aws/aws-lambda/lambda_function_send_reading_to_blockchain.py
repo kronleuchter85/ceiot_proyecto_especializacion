@@ -1,14 +1,18 @@
 import json
 import urllib.request
-
+import os
 import boto3
 import uuid
 from datetime import datetime
 
+
+QUEUE_URL = os.environ['QUEUE_URL']
+DAPP_ENDPOINT_URL = os.environ['DAPP_ENDPOINT_URL']
+
+
 s3 = boto3.client('s3')
-contractName = 'EnvironmentalData2'
-method = 'recordReading'
-url = f"https://uprttz6zud.eu-west-2.awsapprunner.com/api/contracts/{contractName}/xWrite/{method}"
+sqs = boto3.client('sqs')
+
 
 def lambda_handler(event, context):
     
@@ -24,25 +28,25 @@ def lambda_handler(event, context):
                 outer_body = body  
 
             message_str = outer_body['Message']
-            message_data = json.loads(message_str)
-            print(message_data)
+            reading_message = json.loads(message_str)
+            print(reading_message)
 
             payload = {
-                "date": message_data['date'],
-                "time": message_data['time'],
+                "date": reading_message['date'],
+                "time": reading_message['time'],
                 "values": [
-                    message_data['date'],
-                    message_data['time'],                   
-                    message_data['deviceId'],
-                    message_data['geoLat'],
-                    message_data['geoLong'],
-                    message_data['type'],
-                    message_data['value']
+                    reading_message['date'],
+                    reading_message['time'],                   
+                    reading_message['deviceId'],
+                    reading_message['geoLat'],
+                    reading_message['geoLong'],
+                    reading_message['type'],
+                    reading_message['value']
                 ]
             }
             data = json.dumps(payload).encode('utf-8')
             req = urllib.request.Request(
-                url,
+                DAPP_ENDPOINT_URL,
                 data=data,
                 headers={'Content-Type': 'application/json'},
                 method='POST'
@@ -53,16 +57,18 @@ def lambda_handler(event, context):
                 print("Respuesta:", response_data)
 
                 response_json = json.loads(response_data)
-                value = response_json['result']  
-                
-                filename = f"tx-{uuid.uuid4()}.json"
+                tx_result_message = response_json['result']  
 
-                s3.put_object(
-                    Bucket='ceiot-exploratory-robot',  
-                    Key=f"transactions/{filename}",
-                    Body=json.dumps(value),
-                    ContentType='application/json'
+                message_body = {
+                    "reading": reading_message,
+                    "tx": tx_result_message
+                }
+
+                response = sqs.send_message(
+                    QueueUrl=QUEUE_URL,
+                    MessageBody=json.dumps(message_body)
                 )
+
 
         return {
             'statusCode': 200,
