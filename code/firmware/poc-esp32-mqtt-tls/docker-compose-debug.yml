@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+# 
+# DEBUG
+# 
+  esp32:
+    build: .
+    image: daoit/daoit-esp32-mqtt-tls
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - .:/project
+    stdin_open: true
+    tty: true
+    command: idf.py monitor --port /dev/ttyUSB0

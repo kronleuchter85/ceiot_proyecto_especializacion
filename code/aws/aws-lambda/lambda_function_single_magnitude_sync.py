@@ -8,7 +8,7 @@ from datetime import datetime
 s3 = boto3.client('s3')
 contractName = 'EnvironmentalData2'
 method = 'recordReading'
-url = f"https://s4c8dgrvny.eu-west-2.awsapprunner.com/api/contracts/{contractName}/xWrite/{method}"
+url = f"https://uprttz6zud.eu-west-2.awsapprunner.com/api/contracts/{contractName}/xWrite/{method}"
 
 def lambda_handler(event, context):
     
@@ -32,7 +32,7 @@ def lambda_handler(event, context):
                 "time": message_data['time'],
                 "values": [
                     message_data['date'],
-                    message_data['time']                   
+                    message_data['time'],                   
                     message_data['deviceId'],
                     message_data['geoLat'],
                     message_data['geoLong'],
@@ -74,6 +74,6 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 500,
-            'body': json.dumps('Error!', e)
+            'body': json.dumps(f"Error: {e}")
         }
 

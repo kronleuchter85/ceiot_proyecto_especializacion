@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+# 
+# DEPLOY
+# 
+  esp32:
+    build: .
+    image: daoit/daoit-esp32-mqtt-tls
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - .:/project
+    command: idf.py clean build flash --port /dev/ttyUSB0
+  
