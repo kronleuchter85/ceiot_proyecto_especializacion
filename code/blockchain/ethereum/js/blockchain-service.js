@@ -5,11 +5,13 @@ const { ContractService } = require('./contract-service');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const { Web3 } = require("web3");
 const ExpenseService = require('./expenses-service');
+const dynamoRepository = require('./dynamo-repository');
 
 const WALLET_ACCOUNT = process.env.WALLET_ACCOUNT;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const MNEMONIC = process.env.MNEMONIC;
 const BLOCKCHAIN_URL = process.env.BLOCKCHAIN_URL;
+const FORCE_START_NONCE = process.env.FORCE_START_NONCE;
 
 class BlockchainService {
 
@@ -114,8 +116,18 @@ class BlockchainService {
         const time = payload.time;
         const values = payload.values;
         const account = await this.getMainAccount();
-        const nonce = await this.web3.eth.getTransactionCount(account, 'pending');
+
+        const nonce = await this.web3.eth.getTransactionCount(account, 'latest');
+        // const nonce = await this.web3.eth.getTransactionCount(account, 'pending');
         const contractInfo = await ContractService.getContractDetails(contractName);
+        console.log('contractInfo:', contractInfo);
+
+        // console.log('Nonces: ', await DynamoRepository.getAllEntities('nonce_info'));
+        // const nonceInfo = await DynamoRepository.getEntity('nonce_info', { network: 'holesky' });
+        // const nonce = nonceInfo.lastNonce + 1;
+        // console.log('Last Nonce Info:', nonceInfo);
+        // console.log('Using Nonce:', nonce);
+
         const contractAddress = contractInfo.contractAddress;
         const abi = contractInfo.contractABI;
 
@@ -169,6 +181,13 @@ class BlockchainService {
                 time: time
             }
 
+            // let nonce_info = {
+            //     network: contractInfo.network,
+            //     lastNonce: nonce
+            // }
+
+            // console.log('Saving NonceInfo details:', nonce_info);
+            // await DynamoRepository.saveEntity('nonce_info', nonce_info);
             console.log(`Transacción finalizada con éxito:`, result);
             console.log('-----------------------------------------------------------------------------------------');
             return result;
@@ -184,6 +203,8 @@ class BlockchainService {
     async getAllEvents(contractName, eventName) {
 
         const contractInfo = await DynamoRepository.getEntity('contracts', { contractName: contractName });
+        console.log('contractInfo:', contractInfo);
+
         const contractABI = contractInfo.contractABI;
         const contractAddress = contractInfo.contractAddress;
         const contractDeploymentBlockNumber = contractInfo.contractBlockNumber;

@@ -7,3 +7,25 @@
     "date": "2025-04-1",
     "time": "11:23:59"
 }
+
+
+{
+    "deviceId": "12ad-dao23-ux23",
+    "type": "Temperature",
+    "value": "0.00",
+    "geoLat": "-26.056772",
+    "geoLong": "-64.014824",
+    "date": "2025-06-08",
+    "time": "09:23:59"
+}
+
+
+{
+    "deviceId": "9o0p-bnm87-xz21",
+    "type": "Temperature",
+    "value": "25.96",
+    "geoLat": "-45.717163",
+    "geoLong": "-61.777348",
+    "date": "2025-06-08",
+    "time": "08: 59: 38"
+}

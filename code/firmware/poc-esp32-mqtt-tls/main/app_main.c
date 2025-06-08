@@ -332,11 +332,11 @@ static void mqtt_app_start(void)
 
 
 
-        char date_str[10];
+        char date_str[12];
         memset(date_str , '\0' , sizeof(date_str));
         get_date_str(date_str, sizeof(date_str));
 
-        char time_str[10];
+        char time_str[12];
         memset(time_str , '\0' , sizeof(time_str));
         get_time_str(time_str , sizeof(time_str));
 

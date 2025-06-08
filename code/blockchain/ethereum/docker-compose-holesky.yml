@@ -3,21 +3,21 @@
 services:
 
 
-  truffle-deployer:
-    build:
-      context: .
-      dockerfile: Dockerfile.truffle-deployer
-    image: truffle-deployer
-    container_name: truffle-deployer
-    volumes:
-      - ~/.aws:/root/.aws
-    env_file:
-      - ./_holesky.env
-    environment:
-      - AWS_PROFILE=dev 
-    command: /bin/bash -c "truffle migrate --network holesky || true; sleep infinity"
-    stdin_open: true
-    tty: true
+  # truffle-deployer:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.truffle-deployer
+  #   image: truffle-deployer
+  #   container_name: truffle-deployer
+  #   volumes:
+  #     - ~/.aws:/root/.aws
+  #   env_file:
+  #     - ./_holesky.env
+  #   environment:
+  #     - AWS_PROFILE=dev 
+  #   command: /bin/bash -c "truffle migrate --network holesky || true; sleep infinity"
+  #   stdin_open: true
+  #   tty: true
 
   dapp:
     build:
