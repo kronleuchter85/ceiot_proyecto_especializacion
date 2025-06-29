@@ -38,10 +38,10 @@
 #define BROKER_URI "mqtts://a2jlrwil23uep5-ats.iot.eu-west-2.amazonaws.com:8883"
 
 
-#define LAT_MIN -55.0f
-#define LAT_MAX -22.0f
-#define LON_MIN -73.0f
-#define LON_MAX -53.0f
+// #define LAT_MIN -55.0f
+// #define LAT_MAX -22.0f
+// #define LON_MIN -73.0f
+// #define LON_MAX -53.0f
 
 
 #define NUM_DEVICES 50
@@ -68,8 +68,27 @@ static void log_error_if_nonzero(const char *message, int error_code)
     }
 }
 
+typedef struct {
+    float lat_min;
+    float lat_max;
+    float lon_min;
+    float lon_max;
+} RegionBox;
 
+RegionBox region_types[4] = {
+    {-55.0, -38.0, -73.0, -63.0}, // ID = 0
+    {-55.0, -38.0, -63.0, -53.0}, // ID = 1
+    {-38.0, -21.0, -73.0, -63.0}, // ID = 2
+    {-38.0, -21.0, -63.0, -53.0}  // ID = 3
+};
 
+uint8_t C[NUM_DEVICES] = {
+    3, 2, 3, 1, 3, 3, 3, 1, 0, 0,
+    1, 1, 3, 2, 1, 3, 2, 3, 0, 0,
+    0, 1, 1, 2, 1, 2, 1, 3, 0, 0,
+    2, 2, 3, 3, 0, 2, 1, 2, 3, 0,
+    3, 0, 2, 1, 1, 0, 1, 2, 1, 1
+};
 
 const char deviceIds[NUM_DEVICES][STR_LEN] = {
     "12ad-dao23-ux23",
@@ -131,11 +150,11 @@ const char deviceIds[NUM_DEVICES][STR_LEN] = {
 // coordenadas
 // 
 
-float generar_latitud_arg() {
+float generar_latitud_arg(float LAT_MAX , float LAT_MIN) {
     return ((float)rand() / RAND_MAX) * (LAT_MAX - LAT_MIN) + LAT_MIN;
 }
 
-float generar_longitud_arg() {
+float generar_longitud_arg(float LON_MAX, float LON_MIN) {
     return ((float)rand() / RAND_MAX) * (LON_MAX - LON_MIN) + LON_MIN;
 }
 
@@ -347,8 +366,10 @@ static void mqtt_app_start(void)
 
             printf("%s\n", deviceIds[i]);
 
-            float latitude = generar_latitud_arg() ;
-            float longitude = generar_longitud_arg();
+            RegionBox region = region_types[C[i]];
+
+            float latitude = generar_latitud_arg(region.lat_max , region.lat_min) ;
+            float longitude = generar_longitud_arg(region.lon_max , region.lon_min);
 
             //
             // sending Temperature
