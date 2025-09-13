@@ -46,8 +46,8 @@ const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 require('dotenv').config();
 const { MNEMONIC , BLOCKCHAIN_URL , WALLET_ACCOUNT} = process.env;
-console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
-console.log(`MNEMONIC ${MNEMONIC}`);
+// console.log(`BLOCKCHAIN_URL ${BLOCKCHAIN_URL}`);
+// console.log(`MNEMONIC ${MNEMONIC}`);
 
 module.exports = {
   /**
@@ -68,7 +68,6 @@ module.exports = {
       network_id: "*",   // Conecta a cualquier red
     },
 
-
     sepolia: {
       provider: () => new HDWalletProvider(
         MNEMONIC, // Frase secreta de MetaMask
@@ -78,15 +77,10 @@ module.exports = {
       gasPrice: 5000000000, // 5 Gwei
       network_id: 11155111, // ID de la red Sepolia
       skipDryRun: true, // Evita correr una simulación en dry-run antes del despliegue
-      
-      // confirmations: 2, // Nº de confirmaciones antes de considerar la transacción válida
-      // timeoutBlocks: 200, // Nº de bloques de espera antes de fallar
-
       pollingInterval: 1800000,
       disableConfirmationListener: true,
       from: WALLET_ACCOUNT
     },
-
 
     holesky: {
       provider: () => new HDWalletProvider(
@@ -97,10 +91,6 @@ module.exports = {
       gasPrice: 5000000000, // 5 Gwei
       network_id: 17000, // ID de la red Holesky
       skipDryRun: true, // Evita correr una simulación en dry-run antes del despliegue
-      
-      // confirmations: 2, // Nº de confirmaciones antes de considerar la transacción válida
-      // timeoutBlocks: 200, // Nº de bloques de espera antes de fallar
-
       pollingInterval: 1800000,
       disableConfirmationListener: true,
       from: WALLET_ACCOUNT

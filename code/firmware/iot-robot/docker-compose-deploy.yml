@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+# 
+# DEPLOY
+# 
+  # iot_robot:
+  #   build: .
+  #   image: daoit/iot-robot
+  #   devices:
+  #     - "/dev/ttyUSB0:/dev/ttyUSB0"
+  #   volumes:
+  #     - .:/project
+  #   command: idf.py clean build 
+  
+
+
+  iot_robot:
+    build: .
+    image: daoit/iot-robot
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - .:/project
+    command: idf.py clean build flash --port /dev/ttyUSB0
+  

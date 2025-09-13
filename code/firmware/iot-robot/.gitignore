@@ -1,0 +1,5 @@
+build/*
+*.crt
+*.key
+*.pem
+*.env
