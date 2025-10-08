@@ -1,0 +1,15 @@
+let
+  Source = Lakehouse.Contents(null),
+  Navigation = Source{[workspaceId = "81312666-c3bb-44e3-8440-2a9d4e96896a"]}[Data],
+  #"Navigation 1" = Navigation{[lakehouseId = "6f5a4d4e-75bb-4c72-834b-c5ee0240943c"]}[Data],
+  #"Navigation 2" = #"Navigation 1"{[Id = "iot_bronze.transactions", ItemKind = "Table"]}[Data],
+  #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {{"txReceipt.type", "type"}, {"txReceipt.status", "status"}, {"txReceipt.cumulativeGasUsed", "cumulativeGasUsed"}, {"txReceipt.transactionIndex", "transactionIndex"}, {"txReceipt.blockNumber", "blockNumber"}, {"txReceipt.blockHash", "blockHash"}, {"txReceipt.transactionHash", "transactionHash"}, {"txReceipt.gasUsed", "gasUsed"}, {"txReceipt.effectiveGasPrice", "effectiveGasPrice"}, {"txReceipt.from", "tx_from"}, {"txReceipt.to", "tx_to"}, {"txExpense.operation", "operation"}, {"txExpense.eth_usd", "eth_usd_rate"}, {"txExpense.costEth", "costEth"}, {"txExpense.costUSD", "costUSD"}}),
+  #"Changed column type" = Table.TransformColumnTypes(#"Renamed columns", {{"type", Int64.Type}, {"status", Int64.Type},{"cumulativeGasUsed", Int64.Type}, {"transactionIndex", Int64.Type}, {"blockNumber", Int64.Type}, {"gasUsed", Int64.Type}, {"effectiveGasPrice", Int64.Type}, {"costEth", type number}, {"eth_usd_rate", type number}, {"costUSD", type number}, {"date", type date}, {"time", type time}}),
+  #"Lowercased text" = Table.TransformColumns(#"Changed column type", {{"tx_from", each Text.Lower(_), type nullable text}}),
+  #"Lowercased text 1" = Table.TransformColumns(#"Lowercased text", {{"tx_to", each Text.Lower(_), type nullable text}}),
+  #"Lowercased text 2" = Table.TransformColumns(#"Lowercased text 1", {{"blockHash", each Text.Lower(_), type nullable text}}),
+  #"Lowercased text 3" = Table.TransformColumns(#"Lowercased text 2", {{"transactionHash", each Text.Lower(_), type nullable text}}),
+  #"Added custom" = Table.TransformColumnTypes(Table.AddColumn(#"Lowercased text 3", "datetime", each [date] & [time]), {{"datetime", type datetime}}),
+  #"Removed columns" = Table.RemoveColumns(#"Added custom", {"txExpense.gasUsed", "txReceipt.logsBloom", "txReceipt.logs.logIndex", "txReceipt.logs.transactionHash", "txReceipt.logs.transactionIndex", "txReceipt.logs.blockNumber", "txReceipt.logs.blockHash", "txReceipt.logs.data", "txReceipt.logs.address", "txReceipt.logs.topics", "time", "date", "txReceipt.logs.removed", "txReceipt.logs"})
+in
+  #"Removed columns"

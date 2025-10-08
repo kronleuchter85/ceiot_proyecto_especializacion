@@ -1,0 +1,20 @@
+let
+  Source = Lakehouse.Contents(null),
+  Navigation = Source{[workspaceId = "81312666-c3bb-44e3-8440-2a9d4e96896a"]}[Data],
+  #"Navigation 1" = Navigation{[lakehouseId = "6f5a4d4e-75bb-4c72-834b-c5ee0240943c"]}[Data],
+  #"Navigation 2" = #"Navigation 1"{[Id = "iot_bronze.contracts", ItemKind = "Table"]}[Data],
+  #"Changed column type" = Table.TransformColumnTypes(#"Navigation 2", {{"contractBlockNumber", Int64.Type}}),
+  #"Lowercased text" = Table.TransformColumns(#"Changed column type", {{"contractAddress", each Text.Lower(_), type nullable text}}),
+  #"Lowercased text 1" = Table.TransformColumns(#"Lowercased text", {{"contractTransactionHash", each Text.Lower(_), type nullable text}}),
+  #"Added custom" = Table.TransformColumnTypes(Table.AddColumn(#"Lowercased text 1", "datetime", each DateTime.FromText(
+    Text.Start([timestamp], 4) & "-" &
+    Text.Middle([timestamp], 4, 2) & "-" &
+    Text.Middle([timestamp], 6, 2) & " " &
+    Text.Middle([timestamp], 9, 2) & ":" &
+    Text.Middle([timestamp], 11, 2) & ":" &
+    Text.End([timestamp], 2)
+)), {{"datetime", type datetime}}),
+  #"Removed columns" = Table.RemoveColumns(#"Added custom", {"contractABI.anonymous", "contractABI.inputs.indexed", "contractABI.inputs.internalType", "contractABI.inputs.name", "contractABI.inputs.type", "contractABI.type", "contractABI.signature", "timestamp", "contractABI.outputs", "contractABI.stateMutability", "contractABI.name"}),
+  #"Removed duplicates" = Table.Distinct(#"Removed columns", {"contractTransactionHash"})
+in
+  #"Removed duplicates"

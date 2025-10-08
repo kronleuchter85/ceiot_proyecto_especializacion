@@ -1,0 +1,12 @@
+let
+  Source = Lakehouse.Contents(null),
+  Navigation = Source{[workspaceId = "81312666-c3bb-44e3-8440-2a9d4e96896a"]}[Data],
+  #"Navigation 1" = Navigation{[lakehouseId = "6f5a4d4e-75bb-4c72-834b-c5ee0240943c"]}[Data],
+  #"Navigation 2" = #"Navigation 1"{[Id = "iot_bronze.readings", ItemKind = "Table"]}[Data],
+  #"Changed column type" = Table.TransformColumnTypes(#"Navigation 2", {{"value", type number}, {"geoLat", type number}, {"geoLong", type number}, {"date", type date}, {"time", type time}}),
+  #"Lowercased text" = Table.TransformColumns(#"Changed column type", {{"id", each Text.Lower(_), type nullable text}}),
+  #"Lowercased text 1" = Table.TransformColumns(#"Lowercased text", {{"tx_id", each Text.Lower(_), type nullable text}}),
+  #"Added custom" = Table.TransformColumnTypes(Table.AddColumn(#"Lowercased text 1", "datetime", each [date] & [time]), {{"datetime", type datetime}}),
+  #"Removed columns" = Table.RemoveColumns(#"Added custom", {"date", "time"})
+in
+  #"Removed columns"
