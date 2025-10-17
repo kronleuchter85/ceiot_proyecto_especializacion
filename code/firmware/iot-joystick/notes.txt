@@ -1,0 +1,15 @@
+Para bindear el USB en windows al Linux instalado via WSL2:
+
+> usbipd list
+
+Salida por pantalla:
+
+    Connected:
+    BUSID  VID:PID    DEVICE                                                        STATE
+    2-1    10c4:ea60  CP2102 USB to UART Bridge Controller                          Shared
+    2-6    174f:181d  Integrated Camera, Integrated IR Camera, Camera DFU Device    Not shared
+    2-10   8087:0033  Intel(R) Wireless Bluetooth(R)                                Not shared
+
+> usbipd bind --busid 2-1
+
+> usbipd attach --wsl --busid 2-1

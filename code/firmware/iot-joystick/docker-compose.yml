@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  # app_tests:
+  #   build: .
+  #   volumes:
+  #     - .:/project
+  #   command: ceedling
+
+  app:
+    build: .
+    # depends_on: 
+    #   - app_tests
+    image: cese/esp32-integracion-joystick
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - .:/project
+    command: idf.py clean build flash --port /dev/ttyUSB0
+    # command: idf.py monitor --port /dev/ttyUSB0
+  
