@@ -9,7 +9,7 @@
 
 ## Documentación
 - ![Planificación de projecto](docs/Plan_TFM_Carreno_Gonzalo_v4.pdf)
-- ![Memoria técnica](docs/DocArqTecnica.pdf)
+- ![Memoria técnica](docs/TI_Carreno_Gonzalo_V14.pdf)
 - ![Documentación técnica](docs/DocArqTecnica.pdf)
 - ![Informe de avance](docs/InformeDeAvance.pdf)
 - ![Manual de usuario final](docs/ManualUsuario.pdf)
