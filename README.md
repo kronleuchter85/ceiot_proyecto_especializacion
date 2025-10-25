@@ -24,9 +24,7 @@
 
 ## Arquitectura de hardware del sistema
 
-El hardware utilizado para la solución de IoT propuesta es un robot de exploración ambiental de control inalámbrico, desarrollado en la Carrera de Especialización en Sistemas Embebidos de la Universidad de Buenos Aires. En la figura 2 puede apreciarse una fotografı́a del mismo.
-
-- ![Repositorio del proyecto Robot de exploración ambiental](https://github.com/kronleuchter85/cese_proyecto_final)
+El hardware utilizado para la solución de IoT propuesta es un robot de exploración ambiental de control inalámbrico, desarrollado en la Carrera de Especialización en Sistemas Embebidos de la Universidad de Buenos Aires. En la siguiente URL pueden encontrase los detalles del mismo: ![Repositorio del proyecto Robot de exploración ambiental](https://github.com/kronleuchter85/cese_proyecto_final)
 
 
 ## Arquitectura de software del sistema
