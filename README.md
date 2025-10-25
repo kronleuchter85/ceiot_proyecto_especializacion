@@ -26,6 +26,9 @@
 
 El hardware utilizado para la solución de IoT propuesta es un robot de exploración ambiental de control inalámbrico, desarrollado en la Carrera de Especialización en Sistemas Embebidos de la Universidad de Buenos Aires. En la figura 2 puede apreciarse una fotografı́a del mismo.
 
+- ![Repositorio del proyecto Robot de exploración ambiental](https://github.com/kronleuchter85/cese_proyecto_final)
+
+
 ## Arquitectura de software del sistema
 La solución propuesta se compone de una arquitectura IoT distribuida y modular diseñada para capturar, procesar, almacenar y analizar mediciones ambientales generadas por un robot explorador conectado, integrando tecnologías de borde, nube y blockchain para garantizar trazabilidad, integridad y disponibilidad de los datos.
 El sistema se estructura en cuatro grandes capas funcionales: percepción, procesamiento de eventos en tiempo real, almacenamiento y analítica avanzada, y visualización.
@@ -44,6 +47,8 @@ La capa de percepción constituye el nivel más cercano al entorno físico dentr
 Esta capa está implementada sobre un sistema embebido basado en ESP32, un microcontrolador de arquitectura dual-core con conectividad Wi-Fi y Bluetooth integrada, que actúa como nodo inteligente de adquisición y comunicación de datos.
  El desarrollo del firmware se apoya en el framework ESP-IDF y en el sistema operativo en tiempo real FreeRTOS, lo que permite una ejecución concurrente y eficiente de tareas, tales como la lectura de sensores, el procesamiento básico de datos y la gestión de comunicaciones.
 
+![Despliegue de componentes](images/capa_percepcion.png)
+
 #### Componentes principales de percepción
 Sensor DHT11: encargado de medir la temperatura y humedad ambiental, proporcionando lecturas periódicas que son procesadas y formateadas por el microcontrolador.
 Sensor BMP280: utilizado para la medición de presión atmosférica, contribuyendo a la caracterización del entorno físico y las condiciones meteorológicas.
@@ -60,6 +65,8 @@ La capa de percepción cumple el rol fundamental de sensar, formatear y transmit
 
 La capa de red actúa como el vínculo de comunicación entre los dispositivos de percepción en campo y la infraestructura de procesamiento en la nube. Su principal función es garantizar la conectividad, el transporte confiable de datos y la interoperabilidad entre el sistema embebido del robot explorador y los servicios de AWS.
 
+![Despliegue de componentes](images/capa_red.png)
+
 Esta capa está basada en el uso del protocolo MQTT (Message Queuing Telemetry Transport), un estándar ampliamente adoptado en arquitecturas IoT por su bajo consumo de ancho de banda, eficiencia energética y mecanismo de publicación/suscripción, que permite una transmisión asíncrona y desacoplada de mensajes.
 El dispositivo ESP32, actuando como cliente MQTT, establece una conexión segura hacia AWS IoT Core, que opera como broker central en la nube. La comunicación se realiza mediante TLS/SSL, garantizando la integridad y confidencialidad de los datos en tránsito.
 
@@ -75,17 +82,27 @@ Gracias al uso de MQTT sobre transporte IP, la comunicación entre el dispositiv
 ### Capa de procesamiento de eventos cloud
 Los datos publicados desde el robot son recibidos por AWS IoT Core, que los enruta hacia Amazon SNS para su distribución.
 Desde SNS, los mensajes son consumidos por SQS, donde una función AWS Lambda los procesa e invoca una dApp desplegada en AWS App Runner.
- 
+
+![Despliegue de componentes](images/capa_eventos.png)
+
 Esta dApp interactúa con smart contracts desarrollados en Solidity y desplegados en la red Ethereum (vía Alchemy), los cuales registran las transacciones y eventos utilizando los logs de la blockchain para asegurar la trazabilidad.
 
- La respuesta de la invocación es retornada a la función Lambda, que enriquece el mensaje original con los datos de la transacción y lo publica en una segunda cola SQS, desacoplando el flujo de persistencia.
+![Despliegue de componentes](images/capa_blockchain.png)
+
+La respuesta de la invocación es retornada a la función Lambda, que enriquece el mensaje original con los datos de la transacción y lo publica en una segunda cola SQS, desacoplando el flujo de persistencia.
 Una segunda función Lambda toma estos mensajes y los almacena en formato estructurado en Amazon S3, donde están integrados los catálogos de AWS Glue y Athena, permitiendo la consulta directa mediante SQL sobre los datos históricos.
+
+![Despliegue de componentes](images/capa_eventos_s3storage.png)
+
 
 ### Capa de procesamiento analítico en Microsoft Fabric
 
 La siguiente imagen muestra la arquitectura lógica de integración entre las plataformas de AWS y Microsoft Fabric, enfocada en la interoperabilidad de datos y analítica unificada.
 En el entorno de AWS, los datos se almacenan en Amazon S3, organizados en archivos accesibles mediante AWS Glue para catalogación y Amazon Athena para consultas interactivas.
 Desde Microsoft Fabric, se establecen shortcuts directos hacia los archivos en S3, permitiendo acceder a los datos sin replicarlos, integrándolos dentro del ecosistema de Fabric.
+
+![Despliegue de componentes](images/capa_datos.png)
+
 
 En el entorno de Azure / Fabric, el flujo de procesamiento y análisis se compone de los principales servicios:
 - Azure Data Factory (ADF) para la orquestación e ingestión de datos.
