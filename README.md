@@ -151,6 +151,7 @@ Los dashboards están respaldados por un modelo semántico unificado, y permiten
 
 ![Despliegue de componentes](images/powerbi_geo_analysis.png)
 ![Despliegue de componentes](images/powerbi_measures_reading_all.png)
+![Despliegue de componentes](images/powerbi_costs_analysis.png)
 
 
 ## Consideraciones de diseño
