@@ -1,8 +1,0 @@
-{
-    "name": "backend",
-    "version": "1.0.0",
-    "main": "app.js",
-    "dependencies": {
-      "fabric-network": "^2.2.0"
-    }
-  }
