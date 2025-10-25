@@ -182,6 +182,11 @@ La dApp constituye la capa de aplicación encargada de interactuar con los smart
 - Facilitar el desarrollo, prueba y mantenimiento mediante documentación automática y estandarizada de los endpoints con Swagger.
 - Mantener la auditabilidad de las operaciones, asegurando que cada interacción con la blockchain esté registrada y pueda ser verificada posteriormente.
 
+En la siguiente imagen se pueden apreciar los endpoints expuestos por la dApp:
+
+![Despliegue de componentes](images/dapp_endpoints.png)
+
+
 ### Diseño de los smart contracts
 
 Los smart contracts constituyen la capa de registro y trazabilidad de mediciones ambientales en la blockchain de Ethereum, garantizando integridad, inmutabilidad y auditabilidad de los datos recolectados por los robots exploradores.
@@ -206,7 +211,12 @@ Los contratos se despliegan utilizando Truffle, lo que facilita la migración a 
 - Redes de prueba (Sepolia y Holesky): la configuración de Truffle utiliza HDWalletProvider con la frase secreta de MetaMask y la URL RPC de cada red. Se definen parámetros como límite de gas, precio del gas, ID de red, y opciones para desactivar dry-run y listeners de confirmación, asegurando un despliegue confiable y controlado.
 - La configuración soporta despliegue en múltiples entornos, garantizando que el mismo código pueda ejecutarse en redes locales o testnets públicas sin modificaciones.
 
+En la siguiente imagen se puede apreciar la salida por consola del proceso de despliegue utilizando truffle:
 ![Despliegue de componentes](images/sm_deployment.png)
 
+
+Durante el despliegue se almacenan en AWS DynamoDB los ABI generados durante la compilación para permitir la invocación posterior desde la dApp. En la siguiente imagen se puede apreciar una perspectiva del despliegue:
 ![Despliegue de componentes](images/contractDeploymentProcess.png)
+
+
 
