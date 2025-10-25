@@ -5,12 +5,7 @@
 - Título del trabajo: Solución IoT para robot de exploracion ambiental con almacenamiento en blockchain
 - Autor: Mg. Ing. Gonzalo Carreno
 
-
-
-
 ## Video demo del producto
-
-
 
 ## Documentación
 - ![Planificación de projecto](docs/Plan_TFM_Carreno_Gonzalo_v4.pdf)
@@ -18,7 +13,6 @@
 - ![Informe de avance](docs/InformeDeAvance.pdf)
 - ![Manual de usuario final](docs/ManualUsuario.pdf)
 
-## Arquitectura de hardware del sistema
 
 ## Requerimientos funcionales
 
@@ -28,16 +22,21 @@
 - Visualización en dashboards de BI de las métricas resultantes del procesamiento batch.
 
 
+## Arquitectura de hardware del sistema
+
+El hardware utilizado para la solución de IoT propuesta es un robot de exploración ambiental de control inalámbrico, desarrollado en la Carrera de Especialización en Sistemas Embebidos de la Universidad de Buenos Aires. En la figura 2 puede apreciarse una fotografı́a del mismo.
+
 ## Arquitectura de software del sistema
 La solución propuesta se compone de una arquitectura IoT distribuida y modular diseñada para capturar, procesar, almacenar y analizar mediciones ambientales generadas por un robot explorador conectado, integrando tecnologías de borde, nube y blockchain para garantizar trazabilidad, integridad y disponibilidad de los datos.
 El sistema se estructura en cuatro grandes capas funcionales: percepción, procesamiento de eventos en tiempo real, almacenamiento y analítica avanzada, y visualización.
 
 ![Despliegue de componentes](images/software_architecture.png)
 
-1. Capa de Percepción
-2. Capa de Procesamiento de Eventos en Tiempo Real (Cloud Layer - AWS)
-3. Capa de Procesamiento Analítico y Backend (Microsoft Fabric)
-4. Capa de Visualización y Análisis (Power BI)
+La arquitectura esta dividia en cuatro capas:
+- Capa de Percepción
+- Capa de Procesamiento de Eventos en Tiempo Real (Cloud Layer - AWS)
+- Capa de Procesamiento Analítico y Backend (Microsoft Fabric)
+- Capa de Visualización y Análisis (Power BI)
 
 ### Capa de percepción
 
@@ -125,6 +124,14 @@ Administración general de la plataforma y sus componentes
 Los dashboards están respaldados por un modelo semántico unificado, y permiten a los usuarios realizar consultas dinámicas, comparaciones temporales y visualizaciones geoespaciales de los datos procesados.
 
 ## Consideraciones de diseño
+
+El diseño de la presente arquitectura tiene los siguientes objetivos:
+- Permitir la percepción, envío, procesamiento, distribución, almacenamiento, análisis y visualización de lecturas ambientales capturadas por el robot.
+- Proveer un mecanismo ligero y eficiente para registrar mediciones ambientales en la blockchain.
+- Garantizar que los datos sean auditables y confiables, utilizando los logs de eventos en lugar de almacenamiento on-chain para reducir costos de gas.
+- Permitir un procesamiento analítico utilizando herramientas BigData de los datos almacenados.
+- Permitir la explotación mediante reportes visuales de las métricas generadas.
+
 ### Diseño de la dApp
 
 La dApp constituye la capa de aplicación encargada de interactuar con los smart contracts desplegados en Ethereum y exponer funcionalidades a otros componentes de la arquitectura mediante servicios web estandarizados.
@@ -146,7 +153,6 @@ La dApp constituye la capa de aplicación encargada de interactuar con los smart
 - Facilitar el desarrollo, prueba y mantenimiento mediante documentación automática y estandarizada de los endpoints con Swagger.
 - Mantener la auditabilidad de las operaciones, asegurando que cada interacción con la blockchain esté registrada y pueda ser verificada posteriormente.
 
-
 ### Diseño de los smart contracts
 
 Los smart contracts constituyen la capa de registro y trazabilidad de mediciones ambientales en la blockchain de Ethereum, garantizando integridad, inmutabilidad y auditabilidad de los datos recolectados por los robots exploradores.
@@ -162,90 +168,10 @@ El contrato EnvironmentalData2 está diseñado con las siguientes característic
 - Evento NewReading: cada vez que se registra una medición, el contrato emite un evento en la blockchain con todos los datos de la lectura. Esto permite que los sistemas externos (dApps, backends, funciones Lambda) puedan escuchar y reaccionar ante nuevos registros sin necesidad de consultar constantemente el estado del contrato.
 - Función recordReading: es la función pública que permite registrar una nueva lectura. Al ser invocada, no almacena los datos en almacenamiento interno del contrato (para ahorrar gas), sino que emite el evento NewReading, asegurando que los datos queden inmutables en los logs de la blockchain.
 
-#### Diseño de despliegue
+### Despliegue de los contratos
 Los contratos se despliegan utilizando Truffle, lo que facilita la migración a distintas redes y la integración con herramientas de desarrollo y testing como Ganache:
 - Red de desarrollo local (Ganache): permite pruebas locales y simulación de transacciones antes de desplegar en redes reales.
 - Redes de prueba (Sepolia y Holesky): la configuración de Truffle utiliza HDWalletProvider con la frase secreta de MetaMask y la URL RPC de cada red. Se definen parámetros como límite de gas, precio del gas, ID de red, y opciones para desactivar dry-run y listeners de confirmación, asegurando un despliegue confiable y controlado.
 - La configuración soporta despliegue en múltiples entornos, garantizando que el mismo código pueda ejecutarse en redes locales o testnets públicas sin modificaciones.
 
-#### Objetivos del diseño
-- Proveer un mecanismo ligero y eficiente para registrar mediciones ambientales en la blockchain.
-- Garantizar que los datos sean auditables y confiables, utilizando los logs de eventos en lugar de almacenamiento on-chain para reducir costos de gas.
-- Facilitar la integración con dApps y backends, que consumen los eventos para procesar y almacenar los datos en la capa de nube.
-- Permitir flexibilidad en el despliegue en redes de prueba o producción mediante Truffle, soportando distintas configuraciones y entornos.
 
-
-### Servicios de AWS 
-
-- AWS IoT Core
-    - Topic MQTT + Certs
-    - Rules para routera mensajes
-- AWS S3
-    - Para recibir los mensajes routeados desde MQTT
-    - Para storage data temporal Athena
-    - Para storage de terraform
-- AWS Glue Catalog
-    - Database
-    - Table de mensajes MQTT
-- AWS App Runner: 
-    - Para dApp
-- AWS Dynamo:
-    - Collections:
-        - ABI
-        - Expenses
-        - Contracts Registry
-- AWS Systems Manager:
-     - Parameters store:
-        - Alchemy project id
-        - Wallet account address
-        - Blockchain URLs
-- AWS Secret Manager: 
-    - Secret: Para key del wallet
-
-
-
-### Herramientas Blockchain
-
-- Ethereum/Sepolia: no setup
-- Etherscan: no setup
-- Chainlist: no setup
-- Alchemy:
-    - Proyecto: Para el acceso a redes Ethereum
-- Metamask:
-    - Wallet + Account: Para fondear operaciones
-- Google Blockchain Faucets
-
-
-==========================================================
-Dev tools
-==========================================================
-- Truffle
-- Solidity
-- Docker + Docker Compose
-- Ganache
-- Node.js
-- Web3.js
-- ESP-IDF
-
-
-==========================================================
-Actividades
-==========================================================
-- Configuracion de credenciales AWS en la maquina local.
-- Creacion de componentes AWS
-    - buckets S3
-        - para almacenamiento de datos de lecturas
-        - para la configuracion de Athena
-    - creacion de esquema de tablas Glue para reonocer la estructura de datos almacenada en S3
-    - configuracion de Athena para usar el bucket seleccionado para el almacenamiento de sus resultados
-    - creacion de base de datos y tabla Glue en base al esquema definido y los datos almacenados en S3
-    - ejecucion de query Athena para validar que todo funciona.  
-
-- Modificacion de codigo ESP32 para incluir conexion segura MQTT
-- Despliegue de certificados MQTT de AWS IoT Core en ESP32
-- Configuracion de AWS Secret (private key) para escritura blockchain
-- Despliegue de firmware ESP32
-
-- Despliegue de Smart Contracts y dApp
-- Despliegue de data pipeline
-- Ejecucion del contenedor con terraform montando credenciales AWS
