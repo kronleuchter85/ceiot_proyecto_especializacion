@@ -149,7 +149,6 @@ Finalmente, los datos consolidados y curados en el Fabric Warehouse son consumid
 
 Los dashboards están respaldados por un modelo semántico unificado, y permiten a los usuarios realizar consultas dinámicas, comparaciones temporales y visualizaciones geoespaciales de los datos procesados.
 
-![Despliegue de componentes](images/powerbi_costs_analysis.png)
 ![Despliegue de componentes](images/powerbi_geo_analysis.png)
 ![Despliegue de componentes](images/powerbi_measures_reading_all.png)
 
