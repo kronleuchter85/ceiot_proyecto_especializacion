@@ -98,11 +98,11 @@ Una segunda función Lambda toma estos mensajes y los almacena en formato estruc
 ### Capa de procesamiento analítico en Microsoft Fabric
 
 La siguiente imagen muestra la arquitectura lógica de integración entre las plataformas de AWS y Microsoft Fabric, enfocada en la interoperabilidad de datos y analítica unificada.
-En el entorno de AWS, los datos se almacenan en Amazon S3, organizados en archivos accesibles mediante AWS Glue para catalogación y Amazon Athena para consultas interactivas.
-Desde Microsoft Fabric, se establecen shortcuts directos hacia los archivos en S3, permitiendo acceder a los datos sin replicarlos, integrándolos dentro del ecosistema de Fabric.
 
 ![Despliegue de componentes](images/capa_datos.png)
 
+En el entorno de AWS, los datos se almacenan en Amazon S3, organizados en archivos accesibles mediante AWS Glue para catalogación y Amazon Athena para consultas interactivas.
+Desde Microsoft Fabric, se establecen shortcuts directos hacia los archivos en S3, permitiendo acceder a los datos sin replicarlos, integrándolos dentro del ecosistema de Fabric.
 
 En el entorno de Azure / Fabric, el flujo de procesamiento y análisis se compone de los principales servicios:
 - Azure Data Factory (ADF) para la orquestación e ingestión de datos.
@@ -112,7 +112,9 @@ En el entorno de Azure / Fabric, el flujo de procesamiento y análisis se compon
 - Power BI, que consume los datos del warehouse y del lakehouse para generar visualizaciones y modelos semánticos interactivos.
 
 Esta integración híbrida permite un flujo de datos fluido entre AWS y Microsoft Fabric, combinando la flexibilidad del almacenamiento en S3 con las capacidades analíticas y de gobierno de datos del entorno de Fabric.
+
 La siguiente imagen representa el diagrama lógico del pipeline de datos implementado en Microsoft Fabric, que abarca el flujo completo desde la ingestión inicial hasta la capa analítica final.
+![Despliegue de componentes](images/DataPipelineConceptual.png)
 
 El proceso comienza en la capa raw, donde se definen shortcuts hacia archivos almacenados en Amazon S3, permitiendo su acceso directo desde el entorno de Fabric sin necesidad de duplicar la información.
 A continuación, en la capa Lakehouse, los datos son organizados y gestionados en formato Delta, siguiendo una estructura de capas:
@@ -122,6 +124,7 @@ A continuación, en la capa Lakehouse, los datos son organizados y gestionados e
 Finalmente, los datos de la capa gold del lakehouse se replican hacia la capa Gold del data warehouse, desde donde se habilitan para su consumo en soluciones analíticas y modelos semánticos de Power BI.
 
 La siguiente imagen muestra el data pipeline implementado en Azure Data Factory (ADF), diseñado para orquestar el proceso completo de curación y transformación de datos.
+![Despliegue de componentes](images/datafactory_pipeline.png)
 
 El flujo inicia con actividades Copy Data, que trasladan y normalizan la información desde la capa raw hacia la capa bronze, almacenándola en formato Parquet.
 Posteriormente, se utilizan componentes Data Flow para realizar procesos de limpieza, estandarización y transformación de formato, asegurando la calidad y consistencia de los datos antes de su procesamiento avanzado.
@@ -130,15 +133,23 @@ Finalmente, las actividades Copy Data transfieren los conjuntos gold desde el la
 
 La siguiente imagen presenta el modelo relacional del modelo semántico de Power BI, compuesto por tres entidades principales. Estas entidades representan las fuentes de datos clave del sistema y están relacionadas entre sí mediante sus identificadores comunes. El diseño busca optimizar la consistencia, integridad referencial y eficiencia en las consultas analíticas dentro del entorno de Power BI.
 
+![Despliegue de componentes](images/semantic_model.png)
+
+
 ### Capa de visualización en PowerBI
 
 Finalmente, los datos consolidados y curados en el Fabric Warehouse son consumidos por Power BI, donde se han desarrollado un conjunto de dashboards interactivos que permiten el análisis de:
-Costos de transacciones en Ethereum (redes Sepolia y Holesky)
-Mediciones ambientales capturadas por los robots
-Distribución geográfica de las mediciones en territorio argentino
-Administración general de la plataforma y sus componentes
+- Costos de transacciones en Ethereum (redes Sepolia y Holesky)
+- Mediciones ambientales capturadas por los robots
+- Distribución geográfica de las mediciones en territorio argentino
+- Administración general de la plataforma y sus componentes
 
 Los dashboards están respaldados por un modelo semántico unificado, y permiten a los usuarios realizar consultas dinámicas, comparaciones temporales y visualizaciones geoespaciales de los datos procesados.
+
+![Despliegue de componentes](images/powerbi_costs_analysis.png)
+![Despliegue de componentes](images/powerbi_geo_analysis.png)
+![Despliegue de componentes](images/powerbi_measures_reading_all.png)
+
 
 ## Consideraciones de diseño
 
@@ -164,6 +175,7 @@ La dApp constituye la capa de aplicación encargada de interactuar con los smart
 - Validación de los datos recibidos y formateo según el esquema requerido por los contratos inteligentes.
 - Envío de transacciones a la blockchain y monitoreo del estado de ejecución a través de los logs y eventos emitidos por los smart contracts.
 - Devolución de la respuesta a la función Lambda invocadora, incluyendo la información de la transacción en formato JSON, manteniendo la trazabilidad de la lectura original.
+- 
 #### Objetivos de diseño
 - Garantizar interoperabilidad entre la blockchain y los servicios en la nube, desacoplando la lógica de smart contracts del backend principal.
 - Proveer un punto de integración seguro y escalable que permita invocar contratos desde múltiples clientes o funciones serverless.
@@ -173,7 +185,9 @@ La dApp constituye la capa de aplicación encargada de interactuar con los smart
 ### Diseño de los smart contracts
 
 Los smart contracts constituyen la capa de registro y trazabilidad de mediciones ambientales en la blockchain de Ethereum, garantizando integridad, inmutabilidad y auditabilidad de los datos recolectados por los robots exploradores.
+
 #### Estructura del contrato
+
 El contrato EnvironmentalData2 está diseñado con las siguientes características:
 - Estructura de datos (struct) EnvironmentalReading: define un registro de medición con los campos:
     - deviceId: identificador del robot emisor.
@@ -186,9 +200,13 @@ El contrato EnvironmentalData2 está diseñado con las siguientes característic
 - Función recordReading: es la función pública que permite registrar una nueva lectura. Al ser invocada, no almacena los datos en almacenamiento interno del contrato (para ahorrar gas), sino que emite el evento NewReading, asegurando que los datos queden inmutables en los logs de la blockchain.
 
 ### Despliegue de los contratos
+
 Los contratos se despliegan utilizando Truffle, lo que facilita la migración a distintas redes y la integración con herramientas de desarrollo y testing como Ganache:
 - Red de desarrollo local (Ganache): permite pruebas locales y simulación de transacciones antes de desplegar en redes reales.
 - Redes de prueba (Sepolia y Holesky): la configuración de Truffle utiliza HDWalletProvider con la frase secreta de MetaMask y la URL RPC de cada red. Se definen parámetros como límite de gas, precio del gas, ID de red, y opciones para desactivar dry-run y listeners de confirmación, asegurando un despliegue confiable y controlado.
 - La configuración soporta despliegue en múltiples entornos, garantizando que el mismo código pueda ejecutarse en redes locales o testnets públicas sin modificaciones.
 
+![Despliegue de componentes](images/sm_deployment.png)
+
+![Despliegue de componentes](images/contractDeploymentProcess.png)
 
