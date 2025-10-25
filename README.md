@@ -1,8 +1,32 @@
-# ceiot_proyecto_especializacion
+# Solución IoT para robot de exploracion ambiental con almacenamiento en blockchain
+## Universidad de Buenos Aires - Facultad de Ingeniería
+## Proyecto integrador 
+- Carrera: Mestría en Internet de las Cosas
+- Título del trabajo: Solución IoT para robot de exploracion ambiental con almacenamiento en blockchain
+- Autor: Mg. Ing. Gonzalo Carreno
 
-==========================================================
-AWS services
-==========================================================
+
+![Despliegue de componentes](images/software_architecture.png)
+
+
+## Video demo del producto
+
+
+
+## Documentación
+- ![Planificación de projecto](docs/Plan_TFM_Carreno_Gonzalo_v4.pdf)
+- ![Documentación técnica](docs/DocArqTecnica.pdf)
+- ![Informe de avance](docs/InformeDeAvance.pdf)
+- ![Manual de usuario final](docs/ManualUsuario.pdf)
+
+## Arquitectura de hardware del sistema
+
+
+## Arquitectura de software del sistema
+
+
+### Servicios de AWS 
+
 - AWS IoT Core
     - Topic MQTT + Certs
     - Rules para routera mensajes
@@ -29,9 +53,9 @@ AWS services
     - Secret: Para key del wallet
 
 
-==========================================================
-Blockchain services
-==========================================================
+
+### Herramientas Blockchain
+
 - Ethereum/Sepolia: no setup
 - Etherscan: no setup
 - Chainlist: no setup
